@@ -49,19 +49,18 @@
 class PolyhedronDrawer : protected QGLFunctions
 {
 public:
-    PolyhedronDrawer(Polyhedron* polyhedron);
     PolyhedronDrawer();
     virtual ~PolyhedronDrawer();
 
     void init();
     void draw(QGLShaderProgram *program);
 
-    Polyhedron* polyhedron;
-    GLsizei size;
 private:
     void initPolyhedron();
 
-    GLuint vboIds[2];
+    GLsizei m_indexNbr;
+    Polyhedron* m_polyhedron;
+    GLuint m_vboIds[2];
 
 };
 

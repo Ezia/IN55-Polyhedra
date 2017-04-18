@@ -29,8 +29,7 @@ Polyhedron* FaceShrinkerPolyhedronFilter::getOutputPolyhedron()
 
 void FaceShrinkerPolyhedronFilter::update()
 {
-    output->vertices.clear();
-    output->faces.clear();
+    output->clear();
 
     QList<PolyhedronFace> newFaces;
     QList<PolyhedronVertex> newVertices;
@@ -41,31 +40,29 @@ void FaceShrinkerPolyhedronFilter::update()
         // copy
     } else {
         // loop over faces
-        for (QList<PolyhedronFace>::Iterator faceIt = input->faces.begin(); faceIt != input->faces.end(); faceIt++) {
-            PolyhedronFace face = *faceIt;
+        for (int j = 0; j < input->getFaceNbr(); j++) {
+            PolyhedronFace face = input->getFace(j);
 
             //compute face centroid
             QVector3D centroid(0, 0, 0);
-            int vertexNbr = face.adjVertices.size();
-            for (QList<PolyhedronVertex*>::Iterator vertexIt = face.adjVertices.begin(); vertexIt != face.adjVertices.end();
-                 vertexIt++) {
-                centroid = centroid + (*vertexIt)->position;
+            int vertexNbr = face.getAdjVertexNbr();
+            for (int i = 0; i < face.getAdjVertexNbr(); i++) {
+                centroid = centroid + face.getAdjVertex(i)->getPosition();
             }
             centroid = centroid / vertexNbr;
 
             // compute new vertices of the face
-            PolyhedronFace newFace(face.color);
-            for (QList<PolyhedronVertex*>::Iterator vertexIt = face.adjVertices.begin(); vertexIt != face.adjVertices.end();
-                 vertexIt++) {
-                PolyhedronVertex vertex = **vertexIt;
-                PolyhedronVertex newVertex(centroid + (vertex.position - centroid)*factor);
+            PolyhedronFace newFace(face.getColor());
+            for (int i = 0; i < face.getAdjVertexNbr(); i++) {
+                PolyhedronVertex vertex = *face.getAdjVertex(i);
+                PolyhedronVertex newVertex(centroid + (vertex.getPosition() - centroid)*factor);
                 newVertices.push_back(newVertex);
-                newFace.adjVertices.push_back(&newVertices.back());
+                newFace.addAdjVertex(&newVertices.back());
             }
             newFaces.push_back(newFace);
         }
     }
 
-    output->faces = newFaces;
-    output->vertices = newVertices;
+    output->addFaces(newFaces);
+    output->addVertices(newVertices);
 }

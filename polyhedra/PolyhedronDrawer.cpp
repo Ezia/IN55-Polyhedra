@@ -56,16 +56,12 @@ struct VertexData
     QVector3D color;
 };
 
-PolyhedronDrawer::PolyhedronDrawer(Polyhedron *polyhedron) :
-    polyhedron(polyhedron)
-{}
-
 PolyhedronDrawer::PolyhedronDrawer()
 {}
 
 PolyhedronDrawer::~PolyhedronDrawer()
 {
-    glDeleteBuffers(2, vboIds);
+    glDeleteBuffers(2, m_vboIds);
 }
 
 void PolyhedronDrawer::init()
@@ -73,7 +69,7 @@ void PolyhedronDrawer::init()
     initializeGLFunctions();
 
     // Generate 2 VBOs
-    glGenBuffers(2, vboIds);
+    glGenBuffers(2, m_vboIds);
 
     // Initialize polyhedron geometry and transfer it to VBOs
     initPolyhedron();
@@ -86,7 +82,7 @@ void PolyhedronDrawer::initPolyhedron() {
     filter.setInputPolyhedron(&cube);
     filter.setShrinkFactor(0.5);
     filter.update();
-    polyhedron = filter.getOutputPolyhedron();
+    m_polyhedron = filter.getOutputPolyhedron();
 
     QLinkedList<VertexData> vertices;
     QLinkedList<GLushort> indices;
@@ -95,9 +91,9 @@ void PolyhedronDrawer::initPolyhedron() {
     bool doubleFirstIndex = false;
 
     // loop through faces
-    for (QList<PolyhedronFace>::Iterator faceIt = polyhedron->faces.begin(); faceIt != polyhedron->faces.end(); faceIt++) {
-        PolyhedronFace face = *faceIt;
-        int verticeNbr = face.adjVertices.size();
+    for (int i = 0; i < m_polyhedron->getFaceNbr(); i++) {
+        PolyhedronFace face = m_polyhedron->getFace(i);
+        int verticeNbr = face.getAdjVertexNbr();
 
 
         // Indices for drawing cube faces using triangle strips.
@@ -133,9 +129,9 @@ void PolyhedronDrawer::initPolyhedron() {
         indices.push_back(indices.last());
 
         // Add vertices to list
-        for (QList<PolyhedronVertex*>::Iterator vertexIt = face.adjVertices.begin(); vertexIt != face.adjVertices.end(); vertexIt++) {
-            PolyhedronVertex* vertex = *vertexIt;
-            vertices.push_back({vertex->position, face.color});
+        for ( int i = 0; i < face.getAdjVertexNbr(); i++) {
+            PolyhedronVertex* vertex = face.getAdjVertex(i);
+            vertices.push_back({vertex->getPosition(), face.getColor()});
         }
 
         // update vertex index
@@ -158,14 +154,14 @@ void PolyhedronDrawer::initPolyhedron() {
     }
 
     // Transfer vertex data to VBO 0
-    glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, m_vboIds[0]);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(VertexData), tab_vertices, GL_STATIC_DRAW);
 
     // Transfer index data to VBO 1
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIds[1]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vboIds[1]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLushort), tab_indices, GL_STATIC_DRAW);
 
-    size = indices.size();
+    m_indexNbr = indices.size();
 
     delete[] tab_vertices;
     delete[] tab_indices;
@@ -175,8 +171,8 @@ void PolyhedronDrawer::initPolyhedron() {
 void PolyhedronDrawer::draw(QGLShaderProgram *program)
 {
     // Tell OpenGL which VBOs to use
-    glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIds[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, m_vboIds[0]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vboIds[1]);
 
     // Offset for position
     quintptr offset = 0;
@@ -195,6 +191,6 @@ void PolyhedronDrawer::draw(QGLShaderProgram *program)
     glVertexAttribPointer(colorLocation, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (const void *)offset);
 
     // Draw cube geometry using indices from VBO 1
-    glDrawElements(GL_TRIANGLE_STRIP, size, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_TRIANGLE_STRIP, m_indexNbr, GL_UNSIGNED_SHORT, 0);
 }
 //! [2]

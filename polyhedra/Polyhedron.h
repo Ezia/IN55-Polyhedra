@@ -9,6 +9,7 @@
 #include <QList>
 #include <QVector3D>
 #include <QPair>
+#include <initializer_list>
 
 // Rules :
 // Face vertices are listed in counter clockwise order
@@ -16,7 +17,7 @@
 // Vertices sharing the same face must be coplanar
 // Colors in RGB
 
-#define DEFAULT_FACE_COLOR QVector3D(0.5, 0.5, 0.5)
+#define DEFAULT_FACE_COLOR QVector3D(1, 1, 1)
 #define RED QVector3D(1, 0, 0)
 #define GREEN QVector3D(0, 1, 0)
 #define BLUE QVector3D(0, 0, 1)
@@ -24,24 +25,34 @@
 #define YELLOW QVector3D(1, 1, 0)
 #define TURQUOISE QVector3D(0, 1, 1)
 
-class PolyhedronVertex;
-class PolyhedronFace;
-
 class PolyhedronVertex {
 public:
     PolyhedronVertex(double x, double y, double z);
     PolyhedronVertex(QVector3D position);
 
-    QVector3D position;
+    QVector3D getPosition();
+
+private:
+    QVector3D m_position;
 };
 
 class PolyhedronFace {
 public:
     PolyhedronFace(QVector3D color);
 
-    // counter clockwise
-    QList<PolyhedronVertex*> adjVertices;
-    QVector3D color;
+    QVector3D getColor();
+    void setColor(QVector3D color);
+
+    void addAdjVertex(PolyhedronVertex* adjVertex);
+    void addAdjVertices(QList<PolyhedronVertex*> adjVertex);
+    PolyhedronVertex* getAdjVertex(int id);
+    int getAdjVertexNbr();
+    void clearAdjVertices();
+
+private:
+    // counter clockwise order
+    QList<PolyhedronVertex*> m_adjVertices;
+    QVector3D m_color;
 };
 
 class Polyhedron {
@@ -50,8 +61,19 @@ public:
     virtual ~Polyhedron() {}
     virtual void init() {}
 
-    QList<PolyhedronVertex> vertices;
-    QList<PolyhedronFace> faces;
+    void addVertex(PolyhedronVertex vertex);
+    void addVertices(QList<PolyhedronVertex> vertices);
+    void addFace(PolyhedronFace face);
+    void addFaces(QList<PolyhedronFace> faces);
+    int getVertexNbr();
+    int getFaceNbr();
+    PolyhedronFace getFace(int id);
+    PolyhedronVertex getVertex(int id);
+    void clear();
+
+protected:
+    QList<PolyhedronVertex> m_vertices;
+    QList<PolyhedronFace> m_faces;
 };
 
 #endif // POLYHEDRA_H
