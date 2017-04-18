@@ -41,7 +41,7 @@
 #ifndef MAINWIDGET_H
 #define MAINWIDGET_H
 
-#include "geometryengine.h"
+#include "PolyhedronDrawer.h"
 
 #include <QGLWidget>
 #include <QGLFunctions>
@@ -52,7 +52,7 @@
 #include <QGLShaderProgram>
 
 
-class GeometryEngine;
+class PolyhedronDrawer;
 
 class MainWidget : public QGLWidget, protected QGLFunctions
 {
@@ -72,14 +72,11 @@ protected:
     void paintGL();
 
     void initShaders();
-    void initTextures();
 
 private:
     QBasicTimer timer;
     QGLShaderProgram program;
-    GeometryEngine geometries;
-
-    GLuint texture;
+    PolyhedronDrawer polyhedronDrawer;
 
     QMatrix4x4 projection;
 

@@ -38,7 +38,7 @@
 **
 ****************************************************************************/
 
-#include "mainwidget.h"
+#include "MainWidget.h"
 
 #include <QMouseEvent>
 
@@ -52,11 +52,8 @@ MainWidget::MainWidget(QWidget *parent) :
 }
 
 MainWidget::~MainWidget()
-{
-    deleteTexture(texture);
-}
+{}
 
-//! [0]
 void MainWidget::mousePressEvent(QMouseEvent *e)
 {
     // Save mouse press position
@@ -81,9 +78,7 @@ void MainWidget::mouseReleaseEvent(QMouseEvent *e)
     // Increase angular speed
     angularSpeed += acc;
 }
-//! [0]
 
-//! [1]
 void MainWidget::timerEvent(QTimerEvent *)
 {
     // Decrease angular speed (friction)
@@ -100,30 +95,25 @@ void MainWidget::timerEvent(QTimerEvent *)
         updateGL();
     }
 }
-//! [1]
 
 void MainWidget::initializeGL()
 {
     initializeGLFunctions();
     qglClearColor(Qt::black);
     initShaders();
-    initTextures();
 
-//! [2]
     // Enable depth buffer
     glEnable(GL_DEPTH_TEST);
 
     // Enable back face culling
     glEnable(GL_CULL_FACE);
-//! [2]
 
-    geometries.init();
+    polyhedronDrawer.init();
 
     // Use QBasicTimer because its faster than QTimer
     timer.start(12, this);
 }
 
-//! [3]
 void MainWidget::initShaders()
 {
     // Override system locale until shaders are compiled
@@ -148,29 +138,7 @@ void MainWidget::initShaders()
     // Restore system locale
     setlocale(LC_ALL, "");
 }
-//! [3]
 
-//! [4]
-void MainWidget::initTextures()
-{
-    // Load cube.png image
-    glEnable(GL_TEXTURE_2D);
-    texture = bindTexture(QImage(":/cube.png"));
-
-    // Set nearest filtering mode for texture minification
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-    // Set bilinear filtering mode for texture magnification
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    // Wrap texture coordinates by repeating
-    // f.ex. texture coordinate (1.1, 1.2) is same as (0.1, 0.2)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-}
-//! [4]
-
-//! [5]
 void MainWidget::resizeGL(int w, int h)
 {
     // Set OpenGL viewport to cover whole widget
@@ -188,14 +156,12 @@ void MainWidget::resizeGL(int w, int h)
     // Set perspective projection
     projection.perspective(fov, aspect, zNear, zFar);
 }
-//! [5]
 
 void MainWidget::paintGL()
 {
     // Clear color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-//! [6]
     // Calculate model view transformation
     QMatrix4x4 matrix;
     matrix.translate(0.0, 0.0, -5.0);
@@ -203,11 +169,7 @@ void MainWidget::paintGL()
 
     // Set modelview-projection matrix
     program.setUniformValue("mvp_matrix", projection * matrix);
-//! [6]
-
-    // Use texture unit 0 which contains cube.png
-    program.setUniformValue("texture", 0);
 
     // Draw cube geometry
-    geometries.drawCubeGeometry(&program);
+    polyhedronDrawer.draw(&program);
 }

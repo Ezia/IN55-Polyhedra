@@ -38,25 +38,31 @@
 **
 ****************************************************************************/
 
-#ifndef GEOMETRYENGINE_H
-#define GEOMETRYENGINE_H
+#ifndef PolyhedronDrawer_H
+#define PolyhedronDrawer_H
 
 #include <QGLFunctions>
 #include <QGLShaderProgram>
 
-class GeometryEngine : protected QGLFunctions
+#include "Polyhedron.h"
+
+class PolyhedronDrawer : protected QGLFunctions
 {
 public:
-    GeometryEngine();
-    virtual ~GeometryEngine();
+    PolyhedronDrawer(Polyhedron* polyhedron);
+    PolyhedronDrawer();
+    virtual ~PolyhedronDrawer();
 
     void init();
-    void drawCubeGeometry(QGLShaderProgram *program);
+    void draw(QGLShaderProgram *program);
 
+    Polyhedron* polyhedron;
+    GLsizei size;
 private:
-    void initCubeGeometry();
+    void initPolyhedron();
 
     GLuint vboIds[2];
+
 };
 
-#endif // GEOMETRYENGINE_H
+#endif // PolyhedronDrawer_H
