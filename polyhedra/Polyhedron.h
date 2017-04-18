@@ -13,7 +13,7 @@
 
 // Rules :
 // Face vertices are listed in counter clockwise order
-// A face is a least composed of 3 vertices
+// A face is at least composed of 3 vertices
 // Vertices sharing the same face must be coplanar
 // Colors in RGB
 
