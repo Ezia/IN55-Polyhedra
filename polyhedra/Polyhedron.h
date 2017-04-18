@@ -30,6 +30,7 @@ class PolyhedronFace;
 class PolyhedronVertex {
 public:
     PolyhedronVertex(double x, double y, double z);
+    PolyhedronVertex(QVector3D position);
 
     QVector3D position;
 };
@@ -47,7 +48,7 @@ class Polyhedron {
 public:
     // init structure
     virtual ~Polyhedron() {}
-    virtual void init() = 0;
+    virtual void init() {}
 
     QList<PolyhedronVertex> vertices;
     QList<PolyhedronFace> faces;

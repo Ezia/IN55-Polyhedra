@@ -39,6 +39,7 @@
 ****************************************************************************/
 
 #include "PolyhedronDrawer.h"
+#include "FaceShrinkerPolyhedronFilter.h"
 
 #include <QVector2D>
 #include <QVector3D>
@@ -80,8 +81,12 @@ void PolyhedronDrawer::init()
 
 void PolyhedronDrawer::initPolyhedron() {
     Cube cube;
-    polyhedron = &cube;
-    polyhedron->init();
+    cube.init();
+    FaceShrinkerPolyhedronFilter filter;
+    filter.setInputPolyhedron(&cube);
+    filter.setShrinkFactor(0.5);
+    filter.update();
+    polyhedron = filter.getOutputPolyhedron();
 
     QLinkedList<VertexData> vertices;
     QLinkedList<GLushort> indices;
