@@ -40,6 +40,9 @@ class PolyhedronFace {
 public:
     PolyhedronFace(QVector3D color);
 
+    void computeNormal();
+    QVector3D getNormal();
+
     QVector3D getColor();
     void setColor(QVector3D color);
 
@@ -53,10 +56,16 @@ private:
     // counter clockwise order
     QList<PolyhedronVertex*> m_adjVertices;
     QVector3D m_color;
+    QVector3D m_normal;
 };
 
 class Polyhedron {
 public:
+    Polyhedron();
+    Polyhedron(Polyhedron const& polyhedron);
+
+    Polyhedron& operator=(Polyhedron const& polyhedron);
+
     // init structure
     virtual ~Polyhedron() {}
     virtual void init() {}
@@ -69,6 +78,10 @@ public:
     int getFaceNbr();
     PolyhedronFace getFace(int id);
     PolyhedronVertex getVertex(int id);
+
+    void computeNormals();
+    void setColor(QVector3D color);
+
     void clear();
 
 protected:

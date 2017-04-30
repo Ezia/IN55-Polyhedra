@@ -16,8 +16,21 @@ QVector3D PolyhedronVertex::getPosition() {
 
 
 PolyhedronFace::PolyhedronFace(QVector3D color) :
-    m_color(color)
+    m_color(color),
+    m_normal(0, 0, 0)
 {}
+
+void PolyhedronFace::computeNormal()
+{
+    QVector3D v1 = m_adjVertices[1]->getPosition() - m_adjVertices[0]->getPosition();
+    QVector3D v2 = m_adjVertices[2]->getPosition() - m_adjVertices[1]->getPosition();
+    m_normal = QVector3D::crossProduct(v1, v2).normalized();
+}
+
+QVector3D PolyhedronFace::getNormal()
+{
+    return m_normal;
+}
 
 QVector3D PolyhedronFace::getColor() {
     return m_color;
@@ -54,6 +67,20 @@ void PolyhedronFace::clearAdjVertices()
     m_adjVertices.clear();
 }
 
+
+Polyhedron::Polyhedron()
+{}
+
+Polyhedron::Polyhedron(Polyhedron const &polyhedron) :
+    m_faces(polyhedron.m_faces),
+    m_vertices(polyhedron.m_vertices)
+{}
+
+Polyhedron &Polyhedron::operator=(const Polyhedron &polyhedron)
+{
+    m_faces = polyhedron.m_faces;
+    m_vertices = polyhedron.m_vertices;
+}
 
 void Polyhedron::addVertex(PolyhedronVertex vertex)
 {
@@ -95,6 +122,20 @@ PolyhedronVertex Polyhedron::getVertex(int id)
 {
     assert(id >= 0 && id < m_vertices.size());
     return m_vertices[id];
+}
+
+void Polyhedron::computeNormals()
+{
+    for (QList<PolyhedronFace>::Iterator it = m_faces.begin(); it != m_faces.end(); it++) {
+        (*it).computeNormal();
+    }
+}
+
+void Polyhedron::setColor(QVector3D color)
+{
+    for (QList<PolyhedronFace>::Iterator it = m_faces.begin(); it != m_faces.end(); it++) {
+        (*it).setColor(color);
+    }
 }
 
 void Polyhedron::clear()

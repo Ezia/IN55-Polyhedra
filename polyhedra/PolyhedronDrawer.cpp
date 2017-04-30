@@ -1,44 +1,5 @@
-/****************************************************************************
-**
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
-** Contact: http://www.qt-project.org/legal
-**
-** This file is part of the QtCore module of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:BSD$
-** You may use this file under the terms of the BSD license as follows:
-**
-** "Redistribution and use in source and binary forms, with or without
-** modification, are permitted procurrVertexIded that the following conditions are
-** met:
-**   * Redistributions of source code must retain the above copyright
-**     notice, this list of conditions and the following disclaimer.
-**   * Redistributions in binary form must reproduce the above copyright
-**     notice, this list of conditions and the following disclaimer in
-**     the documentation and/or other materials procurrVertexIded with the
-**     distribution.
-**   * Neither the name of Digia Plc and its Subsidiary(-ies) nor the names
-**     of its contributors may be used to endorse or promote products derived
-**     from this software without specific prior written permission.
-**
-**
-** THIS SOFTWARE IS PROcurrVertexIdED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
-
 #include "PolyhedronDrawer.h"
+
 #include "FaceShrinkerPolyhedronFilter.h"
 
 #include <QVector2D>
@@ -54,6 +15,7 @@ struct VertexData
 {
     QVector3D position;
     QVector3D color;
+    QVector3D normal;
 };
 
 PolyhedronDrawer::PolyhedronDrawer()
@@ -76,13 +38,17 @@ void PolyhedronDrawer::init()
 }
 
 void PolyhedronDrawer::initPolyhedron() {
+    // TODO make a hard copy
     Cube cube;
     cube.init();
     FaceShrinkerPolyhedronFilter filter;
     filter.setInputPolyhedron(&cube);
     filter.setShrinkFactor(0.5);
     filter.update();
-    m_polyhedron = filter.getOutputPolyhedron();
+    m_polyhedron = *filter.getOutputPolyhedron();
+    m_polyhedron = cube;
+    m_polyhedron.computeNormals();
+    m_polyhedron.setColor({1, 1, 1});
 
     QLinkedList<VertexData> vertices;
     QLinkedList<GLushort> indices;
@@ -91,8 +57,8 @@ void PolyhedronDrawer::initPolyhedron() {
     bool doubleFirstIndex = false;
 
     // loop through faces
-    for (int i = 0; i < m_polyhedron->getFaceNbr(); i++) {
-        PolyhedronFace face = m_polyhedron->getFace(i);
+    for (int i = 0; i < m_polyhedron.getFaceNbr(); i++) {
+        PolyhedronFace face = m_polyhedron.getFace(i);
         int verticeNbr = face.getAdjVertexNbr();
 
 
@@ -131,7 +97,7 @@ void PolyhedronDrawer::initPolyhedron() {
         // Add vertices to list
         for ( int i = 0; i < face.getAdjVertexNbr(); i++) {
             PolyhedronVertex* vertex = face.getAdjVertex(i);
-            vertices.push_back({vertex->getPosition(), face.getColor()});
+            vertices.push_back({vertex->getPosition(), face.getColor(), face.getNormal()});
         }
 
         // update vertex index
@@ -170,6 +136,21 @@ void PolyhedronDrawer::initPolyhedron() {
 //! [2]
 void PolyhedronDrawer::draw(QGLShaderProgram *program)
 {
+    // lightning
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+
+    // Create light components
+    GLfloat ambientLight[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+    GLfloat diffuseLight[] = { 0.8f, 0.8f, 0.8, 1.0f };
+    GLfloat position[] = { 1, 1, 0.5, 1.0f };
+
+    // Assign created components to GL_LIGHT0
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+    glLightfv(GL_LIGHT0, GL_POSITION, position);
+
+
     // Tell OpenGL which VBOs to use
     glBindBuffer(GL_ARRAY_BUFFER, m_vboIds[0]);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vboIds[1]);
@@ -186,7 +167,15 @@ void PolyhedronDrawer::draw(QGLShaderProgram *program)
     offset += sizeof(QVector3D);
 
     // Tell OpenGL programmable pipeline how to locate vertex texture coordinate data
-    int colorLocation = program->attributeLocation("a_color");
+    int normalLocation = program->attributeLocation("a_color");
+    program->enableAttributeArray(normalLocation);
+    glVertexAttribPointer(normalLocation, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (const void *)offset);
+
+    // Offset for texture coordinate
+    offset += sizeof(QVector3D);
+
+    // Tell OpenGL programmable pipeline how to locate vertex texture coordinate data
+    int colorLocation = program->attributeLocation("a_normal");
     program->enableAttributeArray(colorLocation);
     glVertexAttribPointer(colorLocation, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (const void *)offset);
 

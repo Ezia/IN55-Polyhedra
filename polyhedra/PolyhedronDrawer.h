@@ -59,7 +59,7 @@ private:
     void initPolyhedron();
 
     GLsizei m_indexNbr;
-    Polyhedron* m_polyhedron;
+    Polyhedron m_polyhedron;
     GLuint m_vboIds[2];
 
 };
