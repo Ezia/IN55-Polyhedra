@@ -10,6 +10,7 @@
 #include <iostream>
 
 #include "Cube.h"
+#include <assert.h>
 
 struct VertexData
 {
@@ -19,7 +20,8 @@ struct VertexData
 };
 
 PolyhedronDrawer::PolyhedronDrawer()
-{}
+{
+}
 
 PolyhedronDrawer::~PolyhedronDrawer()
 {
@@ -30,25 +32,25 @@ void PolyhedronDrawer::init()
 {
     initializeGLFunctions();
 
-    // Generate 2 VBOs
-    glGenBuffers(2, m_vboIds);
+     // Generate 2 VBOs
+     glGenBuffers(2, m_vboIds);
 
-    // Initialize polyhedron geometry and transfer it to VBOs
-    initPolyhedron();
 }
 
-void PolyhedronDrawer::initPolyhedron() {
-    // TODO make a hard copy
-    Cube cube;
-    cube.init();
-    FaceShrinkerPolyhedronFilter filter;
-    filter.setInputPolyhedron(&cube);
-    filter.setShrinkFactor(0.5);
-    filter.update();
-    m_polyhedron = *filter.getOutputPolyhedron();
-    m_polyhedron = cube;
-    m_polyhedron.computeNormals();
-    m_polyhedron.setColor({1, 1, 1});
+void PolyhedronDrawer::setPolyhedron(Polyhedron *polyhedron)
+{
+    m_polyhedron = polyhedron;
+}
+
+void PolyhedronDrawer::update()
+{
+    // Initialize polyhedron geometry and transfer it to VBOs
+     updatePolyhedron();
+}
+
+void PolyhedronDrawer::updatePolyhedron() {
+    // TODO check null pointers for polyhedron
+    m_polyhedron->computeNormals();
 
     QLinkedList<VertexData> vertices;
     QLinkedList<GLushort> indices;
@@ -57,8 +59,8 @@ void PolyhedronDrawer::initPolyhedron() {
     bool doubleFirstIndex = false;
 
     // loop through faces
-    for (int i = 0; i < m_polyhedron.getFaceNbr(); i++) {
-        PolyhedronFace face = m_polyhedron.getFace(i);
+    for (int i = 0; i < m_polyhedron->getFaceNbr(); i++) {
+        PolyhedronFace face = m_polyhedron->getFace(i);
         int verticeNbr = face.getAdjVertexNbr();
 
 

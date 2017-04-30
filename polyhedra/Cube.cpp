@@ -18,12 +18,16 @@ void Cube::init()
     m_vertices.push_back(PolyhedronVertex(m_position.x() + m_dimension.x()/2, m_position.y() + m_dimension.y()/2, m_position.z() + m_dimension.z()/2));
     m_vertices.push_back(PolyhedronVertex(m_position.x() - m_dimension.x()/2, m_position.y() + m_dimension.y()/2, m_position.z() + m_dimension.z()/2));
 
-    m_faces.push_back(PolyhedronFace(RED));
-    m_faces.push_back(PolyhedronFace(GREEN));
-    m_faces.push_back(PolyhedronFace(BLUE));
-    m_faces.push_back(PolyhedronFace(PURPLE));
-    m_faces.push_back(PolyhedronFace(YELLOW));
-    m_faces.push_back(PolyhedronFace(TURQUOISE));
+    for (int i = 0; i < 6; i++) {
+
+        m_faces.push_back(PolyhedronFace(RED));
+    }
+//    m_faces.push_back(PolyhedronFace(RED));
+//    m_faces.push_back(PolyhedronFace(GREEN));
+//    m_faces.push_back(PolyhedronFace(BLUE));
+//    m_faces.push_back(PolyhedronFace(PURPLE));
+//    m_faces.push_back(PolyhedronFace(YELLOW));
+//    m_faces.push_back(PolyhedronFace(TURQUOISE));
 
     m_faces[0].addAdjVertices({&m_vertices[0], &m_vertices[1], &m_vertices[2], &m_vertices[3]});
     m_faces[1].addAdjVertices({&m_vertices[2], &m_vertices[6], &m_vertices[7], &m_vertices[3]});

@@ -10,7 +10,7 @@ public:
     ~FaceShrinkerPolyhedronFilter();
 
     void setInputPolyhedron(Polyhedron* input);
-    // between 1 and 0, 0 leaving faces ase they are
+    // between 1 and 0, 1 leaving faces as they are
     void setShrinkFactor(double factor);
     Polyhedron* getOutputPolyhedron();
     void update();

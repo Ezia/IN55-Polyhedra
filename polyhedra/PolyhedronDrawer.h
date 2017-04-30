@@ -53,13 +53,17 @@ public:
     virtual ~PolyhedronDrawer();
 
     void init();
+
+    void setPolyhedron(Polyhedron* polyhedron);
+    void update();
+
     void draw(QGLShaderProgram *program);
 
 private:
-    void initPolyhedron();
+    void updatePolyhedron();
 
     GLsizei m_indexNbr;
-    Polyhedron m_polyhedron;
+    Polyhedron* m_polyhedron;
     GLuint m_vboIds[2];
 
 };

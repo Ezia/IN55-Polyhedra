@@ -34,11 +34,12 @@ void FaceShrinkerPolyhedronFilter::update()
     QList<PolyhedronFace> newFaces;
     QList<PolyhedronVertex> newVertices;
 
-    if (factor == 0.) {
-        return;
+//    if (factor == 1.) {
+//        return;
 //    } else if (factor == 1.) {
         // copy
-    } else {
+//    } else
+{
         // loop over faces
         for (int j = 0; j < input->getFaceNbr(); j++) {
             PolyhedronFace face = input->getFace(j);

@@ -10,7 +10,9 @@ SOURCES += main.cpp \
     Cube.cpp \
     PolyhedronDrawer.cpp \
     MainWidget.cpp \
-    FaceShrinkerPolyhedronFilter.cpp
+    FaceShrinkerPolyhedronFilter.cpp \
+    Scene.cpp \
+    Light.cpp
 
 qtHaveModule(opengl) {
     QT += opengl
@@ -35,4 +37,6 @@ HEADERS += \
     Cube.h \
     PolyhedronDrawer.h \
     MainWidget.h \
-    FaceShrinkerPolyhedronFilter.h
+    FaceShrinkerPolyhedronFilter.h \
+    Scene.h \
+    Light.h

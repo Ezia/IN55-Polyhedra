@@ -108,7 +108,7 @@ void MainWidget::initializeGL()
     // Enable back face culling
 //    glEnable(GL_CULL_FACE);
 
-    polyhedronDrawer.init();
+    scene.init();
 
     // Use QBasicTimer because its faster than QTimer
     timer.start(12, this);
@@ -170,6 +170,6 @@ void MainWidget::paintGL()
     // Set modelview-projection matrix
     program.setUniformValue("mvp_matrix", projection * matrix);
 
-    // Draw cube geometry
-    polyhedronDrawer.draw(&program);
+    // Draw scene
+    scene.draw(&program);
 }

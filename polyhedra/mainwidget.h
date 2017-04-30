@@ -50,6 +50,7 @@
 #include <QVector2D>
 #include <QBasicTimer>
 #include <QGLShaderProgram>
+#include "Scene.h"
 
 
 class PolyhedronDrawer;
@@ -76,7 +77,7 @@ protected:
 private:
     QBasicTimer timer;
     QGLShaderProgram program;
-    PolyhedronDrawer polyhedronDrawer;
+    Scene scene;
 
     QMatrix4x4 projection;
 
