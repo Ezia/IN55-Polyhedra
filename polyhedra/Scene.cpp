@@ -26,7 +26,7 @@ void Scene::init()
     m_objects.append(cube2);
     m_objects[1].setColor(BLUE);
 
-    m_light.setPosition({1, 0.5, 1});
+    m_light.setPosition({1, 0.6, 1});
     m_light.init();
 }
 

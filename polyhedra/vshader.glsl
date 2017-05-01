@@ -13,6 +13,7 @@ uniform bool a_light; // is the object beeing redered a light ?
 varying vec3 diffuse;
 varying vec3 vertexLightDir;
 varying vec3 vertexCameraDir;
+varying vec3 vertexNormalDir;
 varying float lightDist2;
 
 // vertex data
@@ -40,9 +41,11 @@ void main()
 
 	// Vector that goes from the vertex to the light, in camera space. M is ommited because it's identity.
 	vec4 lightPosition_mv = ( mv_matrix * gl_LightSource[0].position);
-	vec3 lightDir_mv = lightPosition_mv.xyz + eyeDir_mv;
+	vec3 lightDir_mv = lightPosition_mv.xyz - position_mv.xyz;
 	lightDist2 = length(lightDir_mv);
 	vertexLightDir = normalize(lightDir_mv);
+
+	vertexNormalDir = vec4(mv_matrix * vec4(a_normal,0)).xyz;
 
 	// Normal of the the vertex, in camera space
 	// Only correct if ModelMatrix does not scale the model !

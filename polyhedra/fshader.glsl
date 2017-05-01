@@ -9,6 +9,7 @@ uniform bool a_light; // is the object beeing redered a light ?
 varying vec3 diffuse;
 varying vec3 vertexLightDir;
 varying vec3 vertexCameraDir;
+varying vec3 vertexNormalDir;
 varying float lightDist2;
 
 void main() {
@@ -16,7 +17,7 @@ void main() {
     if (a_light) {
 	gl_FragColor = vec4(gl_Color.rgb,1.0);
     } else {
-	float cosTheta = clamp( dot( vertexCameraDir, vertexLightDir), 0,1 );
+	float cosTheta = clamp( dot( vertexNormalDir, vertexLightDir), 0,1 );
 
 	gl_FragColor =
 	// Ambient : simulates indirect lighting
