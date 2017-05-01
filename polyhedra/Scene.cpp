@@ -4,6 +4,7 @@
 #include "Cube.h"
 #include "FaceShrinkerPolyhedronFilter.h"
 
+
 Scene::Scene()
 {
 }
@@ -24,17 +25,22 @@ void Scene::init()
     cube2.init();
     m_objects.append(cube2);
     m_objects[1].setColor(BLUE);
+
+    m_light.setPosition({1, 0.5, 1});
+    m_light.init();
 }
 
 void Scene::draw(QGLShaderProgram *program)
 {
     PolyhedronDrawer drawer;
     drawer.init();
+    drawer.setLight(&m_light);
     for (int i = 0; i < m_objects.size(); i++) {
         drawer.setPolyhedron(&(m_objects[i]));
         drawer.update();
         drawer.draw(program);
     }
 
-    // TODO use light
+    m_light.update();
+    m_light.draw(program);
 }

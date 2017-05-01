@@ -19,7 +19,8 @@ struct VertexData
     QVector3D normal;
 };
 
-PolyhedronDrawer::PolyhedronDrawer()
+PolyhedronDrawer::PolyhedronDrawer() :
+    m_light(NULL)
 {
 }
 
@@ -40,6 +41,11 @@ void PolyhedronDrawer::init()
 void PolyhedronDrawer::setPolyhedron(Polyhedron *polyhedron)
 {
     m_polyhedron = polyhedron;
+}
+
+void PolyhedronDrawer::setLight(Light *light)
+{
+    m_light = light;
 }
 
 void PolyhedronDrawer::update()
@@ -138,19 +144,26 @@ void PolyhedronDrawer::updatePolyhedron() {
 //! [2]
 void PolyhedronDrawer::draw(QGLShaderProgram *program)
 {
-    // lightning
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
+    program->setUniformValue("a_light", false);
 
-    // Create light components
-    GLfloat ambientLight[] = { 0.1f, 0.1f, 0.1f, 1.0f };
-    GLfloat diffuseLight[] = { 0.8f, 0.8f, 0.8, 1.0f };
-    GLfloat position[] = { 1, 1, 0.5, 1.0f };
+    if (m_light) {
+        // lightning
+        glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHT0);
 
-    // Assign created components to GL_LIGHT0
-    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-    glLightfv(GL_LIGHT0, GL_POSITION, position);
+        QVector3D position = m_light->getPosition();
+        QVector3D diffuse = m_light->getDIffuse();
+        QVector3D ambiant = m_light->getAmbiant();
+        // Create light components
+        GLfloat ambientLight[] = { ambiant.x(), ambiant.y(), ambiant.z(), 1.0f };
+        GLfloat diffuseLight[] = { diffuse.x(), diffuse.y(), diffuse.z(), 1.0f };
+        GLfloat positionLight[] = { position.x(), position.y(), position.z(), 1.0f };
+
+        // Assign created components to GL_LIGHT0
+        glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+        glLightfv(GL_LIGHT0, GL_POSITION, positionLight);
+    }
 
 
     // Tell OpenGL which VBOs to use

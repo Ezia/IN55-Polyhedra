@@ -169,6 +169,7 @@ void MainWidget::paintGL()
 
     // Set modelview-projection matrix
     program.setUniformValue("mvp_matrix", projection * matrix);
+    program.setUniformValue("mv_matrix", matrix);
 
     // Draw scene
     scene.draw(&program);

@@ -45,6 +45,7 @@
 #include <QGLShaderProgram>
 
 #include "Polyhedron.h"
+#include "Light.h"
 
 class PolyhedronDrawer : protected QGLFunctions
 {
@@ -55,6 +56,7 @@ public:
     void init();
 
     void setPolyhedron(Polyhedron* polyhedron);
+    void setLight(Light* light);
     void update();
 
     void draw(QGLShaderProgram *program);
@@ -65,7 +67,7 @@ private:
     GLsizei m_indexNbr;
     Polyhedron* m_polyhedron;
     GLuint m_vboIds[2];
-
+    Light* m_light;
 };
 
 #endif // PolyhedronDrawer_H

@@ -4,27 +4,31 @@ precision mediump int;
 precision mediump float;
 #endif
 
-//uniform sampler2D texture;
-
-//varying vec2 v_texcoord;
-
-////! [0]
-//void main()
-//{
-//    // Set fragment color from texture
-//    // gl_FragColor = texture2D(texture, v_texcoord);
-//    gl_FragColor = vec4( gl_Color.rgb, 1.0f );
-//    gl_LightSource[0].ambient.rgb;
-//}
-
-
-varying vec4 diffuse;
-//varying vec4 specular;
+// lightning
+uniform bool a_light; // is the object beeing redered a light ?
+varying vec3 diffuse;
+varying vec3 vertexLightDir;
+varying vec3 vertexCameraDir;
+varying float lightDist2;
 
 void main() {
-//    gl_FragColor = vec4( gl_Color.rgb, 1.0f );
-    gl_FragColor =  gl_LightSource[0].ambient + (diffuse *
-vec4(gl_Color.rgb,1.0));// + (specular * gl_Color.a);
+
+    if (a_light) {
+	gl_FragColor = vec4(gl_Color.rgb,1.0);
+    } else {
+	float cosTheta = clamp( dot( vertexCameraDir, vertexLightDir), 0,1 );
+
+	gl_FragColor =
+	// Ambient : simulates indirect lighting
+	gl_LightSource[0].ambient*gl_Color +
+	// Diffuse : "color" of the object
+	gl_LightSource[0].diffuse*gl_Color * cosTheta / lightDist2 ;
+
+	//    gl_FragColor = vec4( gl_Color.rgb, 1.0f );
+//	    gl_FragColor =  gl_LightSource[0].ambient + (diffuse *
+//	vec4(gl_Color.rgb,1.0));// + (specular * gl_Color.a);
+    }
+
 }
 
 //! [0]

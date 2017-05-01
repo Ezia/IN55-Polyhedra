@@ -12,7 +12,11 @@ SOURCES += main.cpp \
     MainWidget.cpp \
     FaceShrinkerPolyhedronFilter.cpp \
     Scene.cpp \
-    Light.cpp
+    Light.cpp \
+    soil/src/image_DXT.c \
+    soil/src/image_helper.c \
+    soil/src/SOIL.c \
+    soil/src/stb_image_aug.c
 
 qtHaveModule(opengl) {
     QT += opengl
@@ -39,4 +43,10 @@ HEADERS += \
     MainWidget.h \
     FaceShrinkerPolyhedronFilter.h \
     Scene.h \
-    Light.h
+    Light.h \
+    soil/src/image_DXT.h \
+    soil/src/image_helper.h \
+    soil/src/SOIL.h \
+    soil/src/stb_image_aug.h \
+    soil/src/stbi_DDS_aug.h \
+    soil/src/stbi_DDS_aug_c.h
