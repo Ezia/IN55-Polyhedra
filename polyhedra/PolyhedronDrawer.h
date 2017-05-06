@@ -41,13 +41,13 @@
 #ifndef PolyhedronDrawer_H
 #define PolyhedronDrawer_H
 
-#include <QGLFunctions>
-#include <QGLShaderProgram>
+#include <QOpenGLFunctions>
+#include <QOpenGLShaderProgram>
 
 #include "Polyhedron.h"
 #include "Light.h"
 
-class PolyhedronDrawer : protected QGLFunctions
+class PolyhedronDrawer : protected QOpenGLFunctions
 {
 public:
     PolyhedronDrawer();
@@ -59,7 +59,7 @@ public:
     void setLight(Light* light);
     void update();
 
-    void draw(QGLShaderProgram *program);
+    void draw(QOpenGLShaderProgram *program);
 
 private:
     void updatePolyhedron();

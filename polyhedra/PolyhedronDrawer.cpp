@@ -31,7 +31,7 @@ PolyhedronDrawer::~PolyhedronDrawer()
 
 void PolyhedronDrawer::init()
 {
-    initializeGLFunctions();
+    initializeOpenGLFunctions();
 
      // Generate 2 VBOs
      glGenBuffers(2, m_vboIds);
@@ -142,7 +142,7 @@ void PolyhedronDrawer::updatePolyhedron() {
 }
 
 //! [2]
-void PolyhedronDrawer::draw(QGLShaderProgram *program)
+void PolyhedronDrawer::draw(QOpenGLShaderProgram *program)
 {
     program->setUniformValue("a_light", false);
 

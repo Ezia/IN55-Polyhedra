@@ -47,7 +47,7 @@ QVector3D Light::getAmbiant()
 
 void Light::init()
 {
-    initializeGLFunctions();
+    initializeOpenGLFunctions();
 
     glGenBuffers(2, m_vbo);
 
@@ -74,7 +74,7 @@ void Light::update()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort), index, GL_STATIC_DRAW);
 }
 
-void Light::draw(QGLShaderProgram *program)
+void Light::draw(QOpenGLShaderProgram *program)
 {
     program->setUniformValue("a_light", true);
 

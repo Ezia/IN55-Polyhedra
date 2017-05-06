@@ -3,7 +3,7 @@
 
 #include <QList>
 #include <Polyhedron.h>
-#include <QGLShaderProgram>
+#include <QOpenGLShaderProgram>
 
 #include "Light.h"
 
@@ -14,8 +14,8 @@ public:
 
     void init();
 
-    void draw(QGLShaderProgram *program);
-    void drawShadow(QGLShaderProgram *program);
+    void draw(QOpenGLShaderProgram *program);
+    void drawShadow(QOpenGLShaderProgram *program);
 
 private:
     QList<Polyhedron> m_objects;

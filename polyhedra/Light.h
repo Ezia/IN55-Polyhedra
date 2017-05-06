@@ -3,10 +3,10 @@
 
 #include <QVector3D>
 
-#include <QGLShaderProgram>
-#include <QGLFunctions>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLFunctions>
 
-class Light : public QGLFunctions
+class Light : public QOpenGLFunctions
 {
 public:
     Light();
@@ -23,7 +23,7 @@ public:
     void init();
     void update();
 
-    void draw(QGLShaderProgram *program);
+    void draw(QOpenGLShaderProgram *program);
 
 private:
     QVector3D m_position, m_diffuse, m_ambiant;

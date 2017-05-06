@@ -1,16 +1,15 @@
-
 #include "mainwidget.h"
 
+// motion
 #include <QMouseEvent>
 
+// math
 #include <math.h>
-#include <locale.h>
 
 MainWidget::MainWidget(QWidget *parent) :
-    QGLWidget(parent),
+    QOpenGLWidget(parent),
     angularSpeed(0)
-{
-}
+{}
 
 MainWidget::~MainWidget()
 {
@@ -55,14 +54,14 @@ void MainWidget::timerEvent(QTimerEvent *)
         rotation = QQuaternion::fromAxisAndAngle(rotationAxis, angularSpeed) * rotation;
 
         // Update scene
-        updateGL();
+        update();
     }
 }
 
 void MainWidget::initializeGL()
 {
-    initializeGLFunctions();
-    qglClearColor(Qt::black);
+    initializeOpenGLFunctions();
+    glClearColor(0.1, 0.1, 0.1, 1);
     initShaders();
 
     // Enable depth buffer
@@ -73,7 +72,7 @@ void MainWidget::initializeGL()
 
     scene.init();
 
-    fbo = new QGLFramebufferObject(width(), height());
+    fbo = new QOpenGLFramebufferObject(width(), height());
 
     // Use QBasicTimer because its faster than QTimer
     timer.start(12, this);
@@ -81,36 +80,13 @@ void MainWidget::initializeGL()
 
 void MainWidget::initShaders()
 {
-//    QGLShader vshader(QGLShader::Vertex, this);
-//    vshader.compileSourceFile(":/vshader.glsl");
-
-//    QGLShader fshader(QGLShader::Fragment, this);
-//    fshader.compileSourceFile(":/fshader.glsl");
-
-    programPainter.addShaderFromSourceFile(QGLShader::Vertex, ":/vshader.glsl");
-    programPainter.addShaderFromSourceFile(QGLShader::Fragment, ":/fshader.glsl");
+    programPainter.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/vshader.glsl");
+    programPainter.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/fshader.glsl");
     programPainter.link();
 
-    programShadowProjection.addShaderFromSourceFile(QGLShader::Vertex, ":/vshader.glsl");
-    programShadowProjection.addShaderFromSourceFile(QGLShader::Fragment, ":/fshader.glsl");
+    programShadowProjection.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/vshader.glsl");
+    programShadowProjection.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/fshader.glsl");
     programShadowProjection.link();
-
-
-//    // Compile vertex shader
-//    if (!program.addShaderFromSourceFile(QGLShader::Vertex, ":/vshader.glsl"))
-//        close();
-
-//    // Compile fragment shader
-//    if (!program.addShaderFromSourceFile(QGLShader::Fragment, ":/fshader.glsl"))
-//        close();
-
-//    // Link shader pipeline
-//    if (!program.link())
-//        close();
-
-//    // Bind shader pipeline for use
-//    if (!program.bind())
-//        close();
 }
 
 void MainWidget::resizeGL(int w, int h)
@@ -135,10 +111,6 @@ void MainWidget::paintGL()
 {
     programPainter.bind();
 
-//    fbo->bind();
-
-//    glBindTexture(GL_TEXTURE_2D, 0);
-
     // Clear color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -153,16 +125,4 @@ void MainWidget::paintGL()
 
     // Draw scene
     scene.draw(&programPainter);
-
-//    fbo->release();
-}
-
-MainWidget0::MainWidget0(QWidget *parent)
-{
-
-}
-
-MainWidget0::~MainWidget0()
-{
-
 }

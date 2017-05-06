@@ -30,7 +30,7 @@ void Scene::init()
     m_light.init();
 }
 
-void Scene::draw(QGLShaderProgram *program)
+void Scene::draw(QOpenGLShaderProgram *program)
 {
     PolyhedronDrawer drawer;
     drawer.init();
@@ -45,7 +45,7 @@ void Scene::draw(QGLShaderProgram *program)
     m_light.draw(program);
 }
 
-void Scene::drawShadow(QGLShaderProgram *program)
+void Scene::drawShadow(QOpenGLShaderProgram *program)
 {
 
 }
