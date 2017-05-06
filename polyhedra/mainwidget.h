@@ -55,13 +55,21 @@
 
 class PolyhedronDrawer;
 
+class MainWidget0 : public QGLWidget, protected QGLFunctions
+{
+    Q_OBJECT
+public:
+    explicit MainWidget0(QWidget *parent = 0);
+    virtual ~MainWidget0();
+};
+
 class MainWidget : public QGLWidget, protected QGLFunctions
 {
     Q_OBJECT
 
 public:
     explicit MainWidget(QWidget *parent = 0);
-    ~MainWidget();
+    virtual ~MainWidget();
 
 protected:
     void mousePressEvent(QMouseEvent *e);

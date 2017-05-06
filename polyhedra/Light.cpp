@@ -1,6 +1,6 @@
 #include "Light.h"
 
-#include "soil/src/SOIL.h"
+//#include "soil/src/SOIL.h"
 
 Light::Light() :
     m_position(0, 0, 0),
@@ -52,12 +52,12 @@ void Light::init()
     glGenBuffers(2, m_vbo);
 
     int width, height;
-    unsigned char* image = SOIL_load_image("polyhedron_texture.png", &width, &height, 0, SOIL_LOAD_RGB);
-    glGenTextures(1, &m_textureBuf);
-    glBindTexture(GL_TEXTURE_2D, m_textureBuf);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-                  GL_UNSIGNED_BYTE, image);
-    SOIL_free_image_data(image);
+//    unsigned char* image = SOIL_load_image("polyhedron_texture.png", &width, &height, 0, SOIL_LOAD_RGB);
+//    glGenTextures(1, &m_textureBuf);
+//    glBindTexture(GL_TEXTURE_2D, m_textureBuf);
+//    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+//                  GL_UNSIGNED_BYTE, image);
+//    SOIL_free_image_data(image);
 }
 
 void Light::update()
