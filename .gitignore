@@ -29,7 +29,7 @@
 *.app
 
 # QTCreator user file
-*.user
+*.pro.user*
 
 # Build folder
 build-*
