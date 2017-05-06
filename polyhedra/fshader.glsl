@@ -18,13 +18,13 @@ void main() {
     if (a_light) {
 	gl_FragColor = vec4(gl_Color.rgb,1.0);
     } else {
-	float cosTheta = clamp( dot( vertexNormalDir, vertexLightDir), 0,1 );
+        float cosTheta = clamp( dot( vertexNormalDir, vertexLightDir), 0.0f, 1.0f );
 
-	gl_FragColor =
-	// Ambient : simulates indirect lighting
-	gl_LightSource[0].ambient*gl_Color +
-	// Diffuse : "color" of the object
-	gl_LightSource[0].diffuse*gl_Color * cosTheta / lightDist2 ;
+        gl_FragColor =
+            // Ambient : simulates indirect lighting
+            gl_LightSource[0].ambient*gl_Color +
+            // Diffuse : "color" of the object
+            gl_LightSource[0].diffuse*gl_Color * cosTheta / lightDist2 ;
 
 	//    gl_FragColor = vec4( gl_Color.rgb, 1.0f );
 //	    gl_FragColor =  gl_LightSource[0].ambient + (diffuse *

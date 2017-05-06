@@ -36,7 +36,6 @@ HEADERS += \
     Polyhedron.h \
     Cube.h \
     PolyhedronDrawer.h \
-    MainWidget.h \
     FaceShrinkerPolyhedronFilter.h \
     Scene.h \
     Light.h \
