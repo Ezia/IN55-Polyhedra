@@ -1,9 +1,12 @@
 QT       += core gui widgets
 
-TARGET = cube
+TARGET = polyhedra
 TEMPLATE = app
 
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++14
+
+DEFINES += QT_DEPRECATED_WARNINGS
+#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x050800
 
 SOURCES += main.cpp \
     Polyhedron.cpp \
