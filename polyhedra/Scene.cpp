@@ -21,7 +21,7 @@ void Scene::init()
     m_objects[0].setColor(GREEN);
 
     Cube cube2;
-    cube2.setPosition({1.1, 0, 0});
+    cube2.setPosition({0, 0, 0});
     cube2.init();
     m_objects.append(cube2);
     m_objects[1].setColor(BLUE);
@@ -43,4 +43,9 @@ void Scene::draw(QGLShaderProgram *program)
 
     m_light.update();
     m_light.draw(program);
+}
+
+void Scene::drawShadow(QGLShaderProgram *program)
+{
+
 }

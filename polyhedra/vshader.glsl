@@ -21,6 +21,7 @@ attribute vec3 a_position;
 attribute vec3 a_color;
 attribute vec3 a_normal;
 
+
 void main()
 {
     if (a_light) {

@@ -15,6 +15,7 @@ public:
     void init();
 
     void draw(QGLShaderProgram *program);
+    void drawShadow(QGLShaderProgram *program);
 
 private:
     QList<Polyhedron> m_objects;

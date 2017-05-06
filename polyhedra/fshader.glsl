@@ -11,6 +11,7 @@ varying vec3 vertexLightDir;
 varying vec3 vertexCameraDir;
 varying vec3 vertexNormalDir;
 varying float lightDist2;
+varying vec4 pixel;
 
 void main() {
 
@@ -28,8 +29,9 @@ void main() {
 	//    gl_FragColor = vec4( gl_Color.rgb, 1.0f );
 //	    gl_FragColor =  gl_LightSource[0].ambient + (diffuse *
 //	vec4(gl_Color.rgb,1.0));// + (specular * gl_Color.a);
-    }
 
+
+    }
 }
 
 //! [0]

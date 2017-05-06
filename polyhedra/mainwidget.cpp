@@ -52,7 +52,9 @@ MainWidget::MainWidget(QWidget *parent) :
 }
 
 MainWidget::~MainWidget()
-{}
+{
+    if (fbo) delete fbo;
+}
 
 void MainWidget::mousePressEvent(QMouseEvent *e)
 {
@@ -110,33 +112,44 @@ void MainWidget::initializeGL()
 
     scene.init();
 
+    fbo = new QGLFramebufferObject(width(), height());
+
     // Use QBasicTimer because its faster than QTimer
     timer.start(12, this);
 }
 
 void MainWidget::initShaders()
 {
-    // Override system locale until shaders are compiled
-    setlocale(LC_NUMERIC, "C");
+//    QGLShader vshader(QGLShader::Vertex, this);
+//    vshader.compileSourceFile(":/vshader.glsl");
 
-    // Compile vertex shader
-    if (!program.addShaderFromSourceFile(QGLShader::Vertex, ":/vshader.glsl"))
-        close();
+//    QGLShader fshader(QGLShader::Fragment, this);
+//    fshader.compileSourceFile(":/fshader.glsl");
 
-    // Compile fragment shader
-    if (!program.addShaderFromSourceFile(QGLShader::Fragment, ":/fshader.glsl"))
-        close();
+    programPainter.addShaderFromSourceFile(QGLShader::Vertex, ":/vshader.glsl");
+    programPainter.addShaderFromSourceFile(QGLShader::Fragment, ":/fshader.glsl");
+    programPainter.link();
 
-    // Link shader pipeline
-    if (!program.link())
-        close();
+    programShadowProjection.addShaderFromSourceFile(QGLShader::Vertex, ":/vshader.glsl");
+    programShadowProjection.addShaderFromSourceFile(QGLShader::Fragment, ":/fshader.glsl");
+    programShadowProjection.link();
 
-    // Bind shader pipeline for use
-    if (!program.bind())
-        close();
 
-    // Restore system locale
-    setlocale(LC_ALL, "");
+//    // Compile vertex shader
+//    if (!program.addShaderFromSourceFile(QGLShader::Vertex, ":/vshader.glsl"))
+//        close();
+
+//    // Compile fragment shader
+//    if (!program.addShaderFromSourceFile(QGLShader::Fragment, ":/fshader.glsl"))
+//        close();
+
+//    // Link shader pipeline
+//    if (!program.link())
+//        close();
+
+//    // Bind shader pipeline for use
+//    if (!program.bind())
+//        close();
 }
 
 void MainWidget::resizeGL(int w, int h)
@@ -159,6 +172,13 @@ void MainWidget::resizeGL(int w, int h)
 
 void MainWidget::paintGL()
 {
+
+    programPainter.bind();
+
+//    fbo->bind();
+
+//    glBindTexture(GL_TEXTURE_2D, 0);
+
     // Clear color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -168,9 +188,11 @@ void MainWidget::paintGL()
     matrix.rotate(rotation);
 
     // Set modelview-projection matrix
-    program.setUniformValue("mvp_matrix", projection * matrix);
-    program.setUniformValue("mv_matrix", matrix);
+    programPainter.setUniformValue("mvp_matrix", projection * matrix);
+    programPainter.setUniformValue("mv_matrix", matrix);
 
     // Draw scene
-    scene.draw(&program);
+    scene.draw(&programPainter);
+
+//    fbo->release();
 }
