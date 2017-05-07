@@ -12,6 +12,7 @@ varying vec3 vertexCameraDir;
 varying vec3 vertexNormalDir;
 varying float lightDist2;
 varying vec4 pixel;
+varying vec4 lightProj;
 
 void main() {
 
@@ -25,6 +26,12 @@ void main() {
             gl_LightSource[0].ambient*gl_Color +
             // Diffuse : "color" of the object
             gl_LightSource[0].diffuse*gl_Color * cosTheta / lightDist2 ;
+
+        vec4 fragToLight = lightProj - gl_FragCoord;
+        float dist = sqrt(dot(fragToLight.xyz, fragToLight.xyz));
+        dist = (1.+gl_FragCoord.z)/2.;
+//        gl_FragColor = vec4(dist, dist, dist, 1);
+//        gl_FragColor = vec4((gl_FragCoord.z)/2, 1.-gl_FragCoord.z/2, 1.-gl_FragCoord.z/2, 1);
 
 	//    gl_FragColor = vec4( gl_Color.rgb, 1.0f );
 //	    gl_FragColor =  gl_LightSource[0].ambient + (diffuse *

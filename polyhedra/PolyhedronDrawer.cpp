@@ -197,4 +197,57 @@ void PolyhedronDrawer::draw(QOpenGLShaderProgram *program)
     // Draw cube geometry using indices from VBO 1
     glDrawElements(GL_TRIANGLE_STRIP, m_indexNbr, GL_UNSIGNED_SHORT, 0);
 }
+
+void PolyhedronDrawer::drawShadow(QOpenGLShaderProgram *program)
+{
+//    if (m_light) {
+        // lightning
+//        glEnable(GL_LIGHTING);
+//        glEnable(GL_LIGHT0);
+
+//        QVector3D position = m_light->getPosition();
+//        QVector3D diffuse = m_light->getDIffuse();
+//        QVector3D ambiant = m_light->getAmbiant();
+//        // Create light components
+//        GLfloat ambientLight[] = { ambiant.x(), ambiant.y(), ambiant.z(), 1.0f };
+//        GLfloat diffuseLight[] = { diffuse.x(), diffuse.y(), diffuse.z(), 1.0f };
+//        GLfloat positionLight[] = { position.x(), position.y(), position.z(), 1.0f };
+
+//        // Assign created components to GL_LIGHT0
+//        glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+//        glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+//        glLightfv(GL_LIGHT0, GL_POSITION, positionLight);
+
+//        QMatrix4x4 MV;
+//        MV.setToIdentity();
+//        MV.lookAt(m_light->getPosition(), {0, 0, -1}, {0, 1, 0});
+
+//        program->setUniformValue("lightPosition", m_light->getPosition());
+//        program->setUniformValue("MV", MV);
+
+        // Tell OpenGL which VBOs to use
+        glBindBuffer(GL_ARRAY_BUFFER, m_vboIds[0]);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vboIds[1]);
+
+        // Offset for position
+        quintptr offset = 0;
+
+        // Tell OpenGL programmable pipeline how to locate vertex position data
+        int vertexLocation = program->attributeLocation("a_position");
+        program->enableAttributeArray(vertexLocation);
+        glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (const void *)offset);
+
+        // Offset for texture coordinate
+        offset += sizeof(QVector3D);
+
+        // Tell OpenGL programmable pipeline how to locate vertex texture coordinate data
+        int normalLocation = program->attributeLocation("a_color");
+        program->enableAttributeArray(normalLocation);
+        glVertexAttribPointer(normalLocation, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (const void *)offset);
+
+        // Draw cube geometry using indices from VBO 1
+        glDrawElements(GL_TRIANGLE_STRIP, m_indexNbr, GL_UNSIGNED_SHORT, 0);
+//    }
+
+}
 //! [2]

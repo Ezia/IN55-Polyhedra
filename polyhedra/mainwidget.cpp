@@ -5,6 +5,7 @@
 
 // math
 #include <math.h>
+#include "mvpmatrix.h"
 
 MainWidget::MainWidget(QWidget *parent) :
     QOpenGLWidget(parent),
@@ -84,8 +85,8 @@ void MainWidget::initShaders()
     programPainter.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/fshader.glsl");
     programPainter.link();
 
-    programShadowProjection.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/vshader.glsl");
-    programShadowProjection.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/fshader.glsl");
+    programShadowProjection.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/vshadershadowmap.vsh");
+    programShadowProjection.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/fshadershadowmap.fsh");
     programShadowProjection.link();
 }
 
@@ -109,20 +110,32 @@ void MainWidget::resizeGL(int w, int h)
 
 void MainWidget::paintGL()
 {
-    programPainter.bind();
+    MVPMatrix mvp;
+    mvp.view.translate(0, 0, -5);
+    mvp.view.rotate(rotation);
+    mvp.projection = projection;
+
+    programShadowProjection.bind();
 
     // Clear color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Calculate model view transformation
-    QMatrix4x4 matrix;
-    matrix.translate(0.0, 0.0, -5.0);
-    matrix.rotate(rotation);
-
-    // Set modelview-projection matrix
-    programPainter.setUniformValue("mvp_matrix", projection * matrix);
-    programPainter.setUniformValue("mv_matrix", matrix);
+//    fbo->bind();
 
     // Draw scene
-    scene.draw(&programPainter);
+    scene.drawShadow(&programShadowProjection, mvp);
+
+//    fbo->release();
+
+    programShadowProjection.release();
+
+    programPainter.bind();
+
+    // Clear color and depth buffer
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Draw scene
+//    scene.draw(&programPainter, mvp);
+
+    programPainter.release();
 }

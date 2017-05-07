@@ -4,6 +4,7 @@
 #include <QList>
 #include <Polyhedron.h>
 #include <QOpenGLShaderProgram>
+#include "mvpmatrix.h"
 
 #include "Light.h"
 
@@ -14,8 +15,8 @@ public:
 
     void init();
 
-    void draw(QOpenGLShaderProgram *program);
-    void drawShadow(QOpenGLShaderProgram *program);
+    void draw(QOpenGLShaderProgram *program, MVPMatrix mvp);
+    void drawShadow(QOpenGLShaderProgram *program, MVPMatrix mvp);
 
 private:
     QList<Polyhedron> m_objects;

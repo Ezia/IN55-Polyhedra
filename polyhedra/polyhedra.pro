@@ -15,18 +15,23 @@ SOURCES += main.cpp \
     FaceShrinkerPolyhedronFilter.cpp \
     Scene.cpp \
     Light.cpp \
-    mainwidget.cpp
+    mainwidget.cpp \
+    mvpmatrix.cpp
 
 #qtHaveModule(opengl) {
     QT += opengl
 
     SOURCES +=
 
-    HEADERS +=
+    HEADERS += \
+    mvpmatrix.h
 
     RESOURCES += \
         shaders.qrc \
-        textures.qrc
+        textures.qrc \
+    vshadershadowmap.vsh \
+    fshadershadowmap.fsh
+
 #}
 
 # install

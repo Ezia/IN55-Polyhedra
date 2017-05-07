@@ -60,6 +60,7 @@ public:
     void update();
 
     void draw(QOpenGLShaderProgram *program);
+    void drawShadow(QOpenGLShaderProgram *program);
 
 private:
     void updatePolyhedron();

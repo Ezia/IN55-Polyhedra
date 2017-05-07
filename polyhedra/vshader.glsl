@@ -15,6 +15,7 @@ varying vec3 vertexLightDir;
 varying vec3 vertexCameraDir;
 varying vec3 vertexNormalDir;
 varying float lightDist2;
+varying vec4 lightProj;
 
 // vertex data
 attribute vec3 a_position;
@@ -45,8 +46,11 @@ void main()
 	vec3 lightDir_mv = lightPosition_mv.xyz - position_mv.xyz;
 	lightDist2 = length(lightDir_mv);
 	vertexLightDir = normalize(lightDir_mv);
+        lightProj = mvp_matrix * gl_LightSource[0].position;
 
 	vertexNormalDir = vec4(mv_matrix * vec4(a_normal,0)).xyz;
+
+
 
 	// Normal of the the vertex, in camera space
 	// Only correct if ModelMatrix does not scale the model !
