@@ -7,6 +7,7 @@
 #include "mvpmatrix.h"
 
 #include "Light.h"
+#include "spotlight.h"
 
 class Scene
 {
@@ -20,7 +21,8 @@ public:
 
 private:
     QList<Polyhedron> m_objects;
-    Light m_light;
+//    Light m_light;
+    SpotLight m_spotLight;
 };
 
 #endif // SCENE_H

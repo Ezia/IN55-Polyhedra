@@ -6,56 +6,83 @@ precision mediump float;
 
 // Transform matrices
 uniform mat4 mvp_matrix;
-uniform mat4 mv_matrix;
+//uniform mat4 mv_matrix;
 
-// lightning
-uniform bool a_light; // is the object beeing redered a light ?
-varying vec3 diffuse;
-varying vec3 vertexLightDir;
-varying vec3 vertexCameraDir;
-varying vec3 vertexNormalDir;
-varying float lightDist2;
-varying vec4 lightProj;
+uniform mat4 spotLightMVP;
+uniform mat4 spotLightMV;
+uniform vec3 spotLightAmbiant;
+uniform vec3 spotLightDiffusion;
+
+uniform sampler2D spotLightDepth;
 
 // vertex data
 attribute vec3 a_position;
 attribute vec3 a_color;
 attribute vec3 a_normal;
 
+// lightning
+//uniform bool a_light; // is the object beeing redered a light ?
+//varying vec3 diffusion;
+//varying float lightDist;
+varying vec4 positionInSpotLightProjection;
+//varying float lightning; // 0 if the face is back to the light)
+
+
+//varying vec3 vertexLightDir;
+//varying vec3 vertexCameraDir;
+//varying vec3 vertexNormalDir;
+////varying float lightDist2;
+//varying vec4 lightProj;
+varying vec4 coord;
+
 
 void main()
 {
-    if (a_light) {
-	gl_FrontColor = vec4( 1, 1, 1, 1.0f );
-	gl_Position = mvp_matrix * vec4(a_position, 1);
-    } else {
+//    if (a_light) {
+//	gl_FrontColor = vec4( 1, 1, 1, 1.0f );
+//	gl_Position = mvp_matrix * vec4(a_position, 1);
+//    } else {
 	// Calculate vertex position in screen space
 	gl_Position = mvp_matrix * vec4(a_position, 1);
+        coord = mvp_matrix * vec4(a_position, 1);
 
 	gl_FrontColor = vec4( a_color, 1.0f );
 
+//        vec4 positionInSpotLightRef = spotLightMV * vec4(a_position, 1);
+//        lightDist = sqrt(dot(positionInSpotLightRef.xyz, positionInSpotLightRef.xyz));
 
-	// Vector that goes from the vertex to the camera, in camera space.
-	// In camera space, the camera is at the origin (0,0,0).
-	vec4 position_mv = (mv_matrix * vec4(a_position, 1));
-	vec3 eyeDir_mv = vec3(0,0,0) - position_mv.xyz;
-	vertexCameraDir = normalize(eyeDir_mv);
+//        vec3 normalInSpotLightRef = (spotLightMV * vec4(a_normal, 0)).xyz;
+//        if (dot(vec3(0, 0, 1), normalInSpotLightRef) < 0.) {
+//            lightning = 0.;
+//        } else {
+//            lightning = 1.;
+//        }
 
-	// Vector that goes from the vertex to the light, in camera space. M is ommited because it's identity.
-	vec4 lightPosition_mv = ( mv_matrix * gl_LightSource[0].position);
-	vec3 lightDir_mv = lightPosition_mv.xyz - position_mv.xyz;
-	lightDist2 = length(lightDir_mv);
-	vertexLightDir = normalize(lightDir_mv);
-        lightProj = mvp_matrix * gl_LightSource[0].position;
+        vec4 tmp = spotLightMVP * vec4(a_position, 1);
 
-	vertexNormalDir = vec4(mv_matrix * vec4(a_normal,0)).xyz;
+        positionInSpotLightProjection = tmp;
 
+//        gl_Position = spotLightMVP * vec4(a_position, 1);
 
+//	// Vector that goes from the vertex to the camera, in camera space.
+//	// In camera space, the camera is at the origin (0,0,0).
+//	vec4 position_mv = (mv_matrix * vec4(a_position, 1));
+//	vec3 eyeDir_mv = vec3(0,0,0) - position_mv.xyz;
+//	vertexCameraDir = normalize(eyeDir_mv);
+
+//	// Vector that goes from the vertex to the light, in camera space. M is ommited because it's identity.
+//	vec4 lightPosition_mv = ( mv_matrix * gl_LightSource[0].position);
+//	vec3 lightDir_mv = lightPosition_mv.xyz - position_mv.xyz;
+//	lightDist2 = length(lightDir_mv);
+//	vertexLightDir = normalize(lightDir_mv);
+//        lightProj = mvp_matrix * gl_LightSource[0].position;
+
+//	vertexNormalDir = vec4(mv_matrix * vec4(a_normal,0)).xyz;
 
 	// Normal of the the vertex, in camera space
 	// Only correct if ModelMatrix does not scale the model !
 //	vec3 normal_mv = ( mv_matrix * vec4(a_normal,0));
-    }
+//    }
 
 
 //    float

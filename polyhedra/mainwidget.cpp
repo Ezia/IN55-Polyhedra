@@ -73,7 +73,9 @@ void MainWidget::initializeGL()
 
     scene.init();
 
-    fbo = new QOpenGLFramebufferObject(width(), height());
+
+    fbo = new QOpenGLFramebufferObject(width(), height(), QOpenGLFramebufferObject::Depth);
+
 
     // Use QBasicTimer because its faster than QTimer
     timer.start(12, this);
@@ -99,7 +101,7 @@ void MainWidget::resizeGL(int w, int h)
     qreal aspect = qreal(w) / qreal(h ? h : 1);
 
     // Set near plane to 3.0, far plane to 7.0, field of view 45 degrees
-    const qreal zNear = 3.0, zFar = 7.0, fov = 45.0;
+    const qreal zNear = 1.0, zFar = 15.0, fov = 45.0;
 
     // Reset projection
     projection.setToIdentity();
@@ -110,32 +112,74 @@ void MainWidget::resizeGL(int w, int h)
 
 void MainWidget::paintGL()
 {
+//    GLuint frameBuffer;
+//    glGenFramebuffers(1, &frameBuffer);
+
+//    glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+
+//    GLuint rboDepth;
+//    glGenRenderbuffers(1, &rboDepth);
+//    glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+//    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
+
+
     MVPMatrix mvp;
-    mvp.view.translate(0, 0, -5);
+    mvp.view.translate(0, 0, -10);
     mvp.view.rotate(rotation);
     mvp.projection = projection;
 
     programShadowProjection.bind();
 
     // Clear color and depth buffer
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-//    fbo->bind();
+    fbo->bind();
+
+
+    glEnable(GL_DEPTH_TEST);
+
+    glClearColor(1, 1, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Draw scene
     scene.drawShadow(&programShadowProjection, mvp);
 
-//    fbo->release();
+
+    fbo->release();
 
     programShadowProjection.release();
 
     programPainter.bind();
 
+    programPainter.setUniformValue("width", width());
+    programPainter.setUniformValue("height", height());
+
+
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, fbo->texture());
+    glEnable(GL_TEXTURE_2D);
+
+//    glActiveTexture(0);
+
+//    glBindTexture(GL_TEXTURE_2D, fbo->texture());
+    // Give the image to OpenGL
+//    glTexImage2D(GL_TEXTURE_2D, 0,fbo->format().internalTextureFormat()/*GL_RGBA*/, width(), height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
     // Clear color and depth buffer
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Draw scene
-//    scene.draw(&programPainter, mvp);
+    scene.draw(&programPainter, mvp);
 
     programPainter.release();
+
+
+
+
+
+//    glDeleteFramebuffers(1, &frameBuffer);
 }

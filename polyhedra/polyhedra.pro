@@ -16,7 +16,8 @@ SOURCES += main.cpp \
     Scene.cpp \
     Light.cpp \
     mainwidget.cpp \
-    mvpmatrix.cpp
+    mvpmatrix.cpp \
+    spotlight.cpp
 
 #qtHaveModule(opengl) {
     QT += opengl
@@ -24,7 +25,8 @@ SOURCES += main.cpp \
     SOURCES +=
 
     HEADERS += \
-    mvpmatrix.h
+    mvpmatrix.h \
+    spotlight.h
 
     RESOURCES += \
         shaders.qrc \
