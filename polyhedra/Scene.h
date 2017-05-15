@@ -8,7 +8,7 @@
 
 #include "spotlight.h"
 
-class Scene
+class Scene : public QOpenGLFunctions
 {
 public:
     Scene();
@@ -18,11 +18,11 @@ public:
     void init();
 
     // draw the scene objects
-    void draw(QOpenGLShaderProgram *program, QMatrix4x4 proj);
+    void draw(QOpenGLShaderProgram *program);
 
     // draw a shadow map from the spot light point of view
     // TODO : remove VPMatrix parameter and use light parameters
-    void drawShadow(QOpenGLShaderProgram *program, QMatrix4x4 viewProjectionMatrix);
+    void drawShadow(QOpenGLShaderProgram *program);
 
     void drawTest(QOpenGLShaderProgram* program);
 

@@ -49,8 +49,6 @@ private:
 
     // reder objects
     QOpenGLShaderProgram programPainter, programShadowProjection, testShader;
-    QOpenGLFramebufferObject* fbo;
-    GLuint texture;
 };
 
 #endif // MAINWIDGET_H

@@ -6,10 +6,17 @@ precision mediump float;
 
 uniform vec3 spotLightAmbiant;
 uniform vec3 spotLightDiffusion;
+uniform vec3 spotLightSpecular;
 
 varying vec4 positionInSpotLightProjection;
 
 uniform sampler2D spotLightDepth;
+
+varying vec3 normalVec;
+varying vec3 lightVec;
+varying vec3 reflexionVec;
+varying vec3 viewVec;
+
 
 void main() {
 
@@ -26,7 +33,11 @@ void main() {
             inSpotLight = 0.;
         }
 
-        gl_FragColor = vec4(spotLightAmbiant ,1)*gl_Color + inSpotLight*vec4(spotLightDiffusion, 1)*gl_Color;
+        gl_FragColor = gl_Color*(vec4(spotLightAmbiant ,1)
+                + inSpotLight*(
+                    clamp(dot(lightVec, normalVec), 0, 1)*vec4(spotLightDiffusion, 1)
+//                    + pow(clamp(dot(reflexionVec, viewVec), 0, 1), 1)*vec4(spotLightSpecular, 1)
+                ));
 }
 
 
