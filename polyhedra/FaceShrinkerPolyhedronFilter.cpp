@@ -29,7 +29,7 @@ Polyhedron* FaceShrinkerPolyhedronFilter::getOutputPolyhedron()
 
 void FaceShrinkerPolyhedronFilter::update()
 {
-    output->clear();
+    output->removeAll();
 
     QList<PolyhedronFace> newFaces;
     QList<PolyhedronVertex> newVertices;
@@ -42,28 +42,32 @@ void FaceShrinkerPolyhedronFilter::update()
 {
         // loop over faces
         for (int j = 0; j < input->getFaceNbr(); j++) {
-            PolyhedronFace face = input->getFace(j);
+            PolyhedronFace* face = input->getFace(j);
 
             //compute face centroid
             QVector3D centroid(0, 0, 0);
-            int vertexNbr = face.getAdjVertexNbr();
-            for (int i = 0; i < face.getAdjVertexNbr(); i++) {
-                centroid = centroid + face.getAdjVertex(i)->getPosition();
+            int vertexNbr = face->getVertexNbr();
+            for (int i = 0; i < face->getVertexNbr(); i++) {
+                centroid = centroid + face->getVertex(i)->getPosition();
             }
             centroid = centroid / vertexNbr;
 
             // compute new vertices of the face
-            PolyhedronFace newFace(face.getColor());
-            for (int i = 0; i < face.getAdjVertexNbr(); i++) {
-                PolyhedronVertex vertex = *face.getAdjVertex(i);
+            PolyhedronFace newFace;
+            newFace.setColor(face->getColor());
+            QList<PolyhedronVertex*> tmpFaceVertices;
+            for (int i = 0; i < face->getVertexNbr(); i++) {
+                PolyhedronVertex vertex = *face->getVertex(i);
                 PolyhedronVertex newVertex(centroid + (vertex.getPosition() - centroid)*factor);
                 newVertices.push_back(newVertex);
-                newFace.addAdjVertex(&newVertices.back());
+                tmpFaceVertices.push_back(&newVertices.back());
+//                newFace.addVertex(&newVertices.back());
             }
+            newFace.setVertices(tmpFaceVertices);
             newFaces.push_back(newFace);
         }
     }
 
-    output->addFaces(newFaces);
+//    output->addFaces(newFaces);
     output->addVertices(newVertices);
 }

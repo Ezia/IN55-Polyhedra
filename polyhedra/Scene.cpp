@@ -15,78 +15,56 @@ void Scene::init()
     // Hard code here every components that compose the scene
     /************************************************/
 
+    // small cube
+    Cube cube;
+    cube.update();
+    m_objects.append(cube);
+    m_objects[0].setColor(GREEN);
+
+    // base surface
     Cube cube2;
     cube2.setPosition({0, 0, -1});
     cube2.setDimension({10, 10, 0.5});
-    cube2.init();
+    cube2.update();
     m_objects.append(cube2);
-    m_objects[0].setColor(BLUE);
+    m_objects[1].setColor(BLUE);
 
 
-    Cube cube;
-    cube.init();
-    m_objects.append(cube);
-    m_objects[1].setColor(GREEN);
-
-    //    m_light.setPosition({0, 0, 3});
-//    m_light.init();
-
+    // spot light
     m_spotLight.setDirection({0, -1, -1});
     m_spotLight.setUpDirection({0, 1, 0});
     m_spotLight.setPosition({1, -1, 3});
     m_spotLight.update();
 }
 
-void Scene::draw(QOpenGLShaderProgram *program, MVPMatrix mvp)
+void Scene::draw(QOpenGLShaderProgram *program, QMatrix4x4 proj)
 {
-    // Set modelview-projection matrix
-    program->setUniformValue("mvp_matrix", mvp.projection * mvp.view * mvp.model);
-//    program->setUniformValue("mv_matrix", mvp.view * mvp.model);
-    program->setUniformValue("spotLightMV", m_spotLight.getProjection());
-    program->setUniformValue("spotLightMVP", mvp.projection * m_spotLight.getProjection());
+    QVector3D ambiant, diffusion;
+    ambiant = {0.2, 0.2, 0.2};
+    diffusion = {0.8, 0.8, 0.8};
+    program->setUniformValue("spotLightAmbiant", ambiant);
+    program->setUniformValue("spotLightDiffusion", diffusion);
 
-    PolyhedronDrawer drawer;
-    drawer.init();
-    drawer.setSpotLight(&m_spotLight);
-//    drawer.setLight(&m_light);
+    program->setUniformValue("spotLightMVP", proj * m_spotLight.getProjection());
+
     for (int i = 0; i < m_objects.size(); i++) {
-        drawer.setPolyhedron(&(m_objects[i]));
-        drawer.update();
-        drawer.draw(program);
+        m_objects[i].drawRender(program);
     }
 
-//    m_light.update();
-//    m_light.draw(program);
 }
 
-void Scene::drawShadow(QOpenGLShaderProgram *program, MVPMatrix mvp)
+void Scene::drawShadow(QOpenGLShaderProgram *program, QMatrix4x4 viewProjectionMatrix)
 {
-    MVPMatrix lightMVP;
-    lightMVP.model = mvp.model;
-//    lightMVP.view.translate(-m_light.getPosition());
-    lightMVP.view.lookAt({0, 0, 0}, {0, -1, -1}, {0, -1, 0});
-//    lightMVP.projection.perspective(45, 1, 2, 50);
-    lightMVP.projection = mvp.projection;
+    program->setUniformValue("spotLightMVP", viewProjectionMatrix * m_spotLight.getProjection());
 
-//    QMatrix4x4 transform;
-//    transform.setToIdentity();
-//    transform.translate(-m_light.getPosition());
-//    transform.lookAt({0, 0, 0}, {0, -1, -1}, {0, -1, 0});
-//    transform.perspective(45, 1, 2, 50);
-
-
-    // Set modelview-projection matrix
-//    program->setUniformValue("MVP", mvp.projection * mvp.view * mvp.model);
-//    program->setUniformValue("lightMVP", lightMVP.projection * lightMVP.view * lightMVP.model);
-    program->setUniformValue("spotLightMVP", mvp.projection * m_spotLight.getProjection());
-
-    PolyhedronDrawer drawer;
-    drawer.init();
-//    drawer.setLight(&m_light);
-    drawer.setSpotLight(&m_spotLight);
     for (int i = 0; i < m_objects.size(); i++) {
-        drawer.setPolyhedron(&(m_objects[i]));
-        drawer.update();
-        drawer.drawShadow(program);
+        m_objects[i].drawShadow(program);
+    }
+}
+
+void Scene::drawTest(QOpenGLShaderProgram *program)
+{
+    for (int i = 0; i < m_objects.size(); i++) {
+        m_objects[i].drawTest(program);
     }
 }

@@ -45,7 +45,6 @@
 #include <QOpenGLShaderProgram>
 
 #include "Polyhedron.h"
-#include "Light.h"
 #include "spotlight.h"
 
 class PolyhedronDrawer : protected QOpenGLFunctions
@@ -57,7 +56,6 @@ public:
     void init();
 
     void setPolyhedron(Polyhedron* polyhedron);
-    void setLight(Light* light);
     void setSpotLight(SpotLight* spotLight) {m_spotLight = spotLight;}
     void update();
 
@@ -70,7 +68,6 @@ private:
     GLsizei m_indexNbr;
     Polyhedron* m_polyhedron;
     GLuint m_vboIds[2];
-//    Light* m_light;
     SpotLight* m_spotLight;
 };
 

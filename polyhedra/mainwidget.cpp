@@ -90,6 +90,10 @@ void MainWidget::initShaders()
     programShadowProjection.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/vshadershadowmap.vsh");
     programShadowProjection.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/fshadershadowmap.fsh");
     programShadowProjection.link();
+
+    testShader.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/basicshaderv.vsh");
+    testShader.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/basicshaderf.fsh");
+    testShader.link();
 }
 
 void MainWidget::resizeGL(int w, int h)
@@ -112,74 +116,62 @@ void MainWidget::resizeGL(int w, int h)
 
 void MainWidget::paintGL()
 {
-//    GLuint frameBuffer;
-//    glGenFramebuffers(1, &frameBuffer);
+    QMatrix4x4 MV;
+    MV.setToIdentity();
+    MV.translate(0, 0, -10);
+    MV.rotate(rotation);
 
-//    glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+    // *************************************************************
+    // Uncomment to render the scene with basic shaders
+    // *************************************************************
 
-//    GLuint rboDepth;
-//    glGenRenderbuffers(1, &rboDepth);
-//    glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
-//    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
+//    testShader.bind();
 
+//    testShader.setUniformValue("MVP", projection * MV);
 
-    MVPMatrix mvp;
-    mvp.view.translate(0, 0, -10);
-    mvp.view.rotate(rotation);
-    mvp.projection = projection;
+//    glClearColor(0, 0, 0, 1);
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+//    scene.drawTest(&testShader);
+
+//    testShader.release();
+
+    // *************************************************************
+    // Uncomment to render the scene with light and shadow
+    // *************************************************************
 
     programShadowProjection.bind();
 
-    // Clear color and depth buffer
-
     fbo->bind();
 
-
     glEnable(GL_DEPTH_TEST);
+//    glEnable(GL_CULL_FACE);
 
     glClearColor(1, 1, 1, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Draw scene
-    scene.drawShadow(&programShadowProjection, mvp);
-
+    scene.drawShadow(&programShadowProjection, projection);
 
     fbo->release();
 
     programShadowProjection.release();
 
+
     programPainter.bind();
 
-    programPainter.setUniformValue("width", width());
-    programPainter.setUniformValue("height", height());
-
-
+    programPainter.setUniformValue("mvp_matrix", projection * MV);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, fbo->texture());
     glEnable(GL_TEXTURE_2D);
-
-//    glActiveTexture(0);
-
-//    glBindTexture(GL_TEXTURE_2D, fbo->texture());
-    // Give the image to OpenGL
-//    glTexImage2D(GL_TEXTURE_2D, 0,fbo->format().internalTextureFormat()/*GL_RGBA*/, width(), height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
     // Clear color and depth buffer
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Draw scene
-    scene.draw(&programPainter, mvp);
+    scene.draw(&programPainter, projection);
 
     programPainter.release();
 
-
-
-
-
-//    glDeleteFramebuffers(1, &frameBuffer);
 }

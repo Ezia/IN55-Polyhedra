@@ -43,10 +43,6 @@ void PolyhedronDrawer::setPolyhedron(Polyhedron *polyhedron)
     m_polyhedron = polyhedron;
 }
 
-void PolyhedronDrawer::setLight(Light *light)
-{
-//    m_light = light;
-}
 
 void PolyhedronDrawer::update()
 {
@@ -56,7 +52,7 @@ void PolyhedronDrawer::update()
 
 void PolyhedronDrawer::updatePolyhedron() {
     // TODO check null pointers for polyhedron
-    m_polyhedron->computeNormals();
+//    m_polyhedron->computeNormals();
 
     QLinkedList<VertexData> vertices;
     QLinkedList<GLushort> indices;
@@ -66,8 +62,8 @@ void PolyhedronDrawer::updatePolyhedron() {
 
     // loop through faces
     for (int i = 0; i < m_polyhedron->getFaceNbr(); i++) {
-        PolyhedronFace face = m_polyhedron->getFace(i);
-        int verticeNbr = face.getAdjVertexNbr();
+        PolyhedronFace* face = m_polyhedron->getFace(i);
+        int verticeNbr = face->getVertexNbr();
 
 
         // Indices for drawing cube faces using triangle strips.
@@ -103,9 +99,9 @@ void PolyhedronDrawer::updatePolyhedron() {
         indices.push_back(indices.last());
 
         // Add vertices to list
-        for ( int i = 0; i < face.getAdjVertexNbr(); i++) {
-            PolyhedronVertex* vertex = face.getAdjVertex(i);
-            vertices.push_back({vertex->getPosition(), face.getColor(), face.getNormal()});
+        for ( int i = 0; i < face->getVertexNbr(); i++) {
+            PolyhedronVertex* vertex = face->getVertex(i);
+            vertices.push_back({vertex->getPosition(), face->getColor(), face->getNormal()});
         }
 
         // update vertex index

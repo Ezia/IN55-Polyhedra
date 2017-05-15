@@ -6,7 +6,6 @@
 #include <QOpenGLShaderProgram>
 #include "mvpmatrix.h"
 
-#include "Light.h"
 #include "spotlight.h"
 
 class Scene
@@ -14,14 +13,25 @@ class Scene
 public:
     Scene();
 
+    // Scene building
+    // Objects and light are hard coded here for testing purpose
     void init();
 
-    void draw(QOpenGLShaderProgram *program, MVPMatrix mvp);
-    void drawShadow(QOpenGLShaderProgram *program, MVPMatrix mvp);
+    // draw the scene objects
+    void draw(QOpenGLShaderProgram *program, QMatrix4x4 proj);
+
+    // draw a shadow map from the spot light point of view
+    // TODO : remove VPMatrix parameter and use light parameters
+    void drawShadow(QOpenGLShaderProgram *program, QMatrix4x4 viewProjectionMatrix);
+
+    void drawTest(QOpenGLShaderProgram* program);
 
 private:
+    // objects in the scene
     QList<Polyhedron> m_objects;
-//    Light m_light;
+
+    // spot light of the scene
+    // TODO : develop other kinds of light
     SpotLight m_spotLight;
 };
 

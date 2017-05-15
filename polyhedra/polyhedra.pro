@@ -14,7 +14,6 @@ SOURCES += main.cpp \
     PolyhedronDrawer.cpp \
     FaceShrinkerPolyhedronFilter.cpp \
     Scene.cpp \
-    Light.cpp \
     mainwidget.cpp \
     mvpmatrix.cpp \
     spotlight.cpp
@@ -32,7 +31,9 @@ SOURCES += main.cpp \
         shaders.qrc \
         textures.qrc \
     vshadershadowmap.vsh \
-    fshadershadowmap.fsh
+    fshadershadowmap.fsh \
+    basicshaderf.fsh \
+    basicshaderv.vsh
 
 #}
 
@@ -48,5 +49,6 @@ HEADERS += \
     PolyhedronDrawer.h \
     FaceShrinkerPolyhedronFilter.h \
     Scene.h \
-    Light.h \
     mainwidget.h
+
+DISTFILES +=

@@ -48,7 +48,7 @@ private:
     Scene scene;
 
     // reder objects
-    QOpenGLShaderProgram programPainter, programShadowProjection;
+    QOpenGLShaderProgram programPainter, programShadowProjection, testShader;
     QOpenGLFramebufferObject* fbo;
     GLuint texture;
 };
