@@ -1,4 +1,4 @@
-QT       += core gui widgets
+QT += core gui widgets
 
 TARGET = polyhedra
 TEMPLATE = app
@@ -8,47 +8,28 @@ QMAKE_CXXFLAGS += -std=c++14
 DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x050800
 
-SOURCES += main.cpp \
-    Polyhedron.cpp \
-    Cube.cpp \
-    PolyhedronDrawer.cpp \
-    FaceShrinkerPolyhedronFilter.cpp \
-    Scene.cpp \
-    mainwidget.cpp \
-    mvpmatrix.cpp \
-    spotlight.cpp
+INCLUDEPATH += src
 
-#qtHaveModule(opengl) {
-    QT += opengl
-
-    SOURCES +=
+SOURCES += \
+    src/Cube.cpp \
+    src/FaceShrinkerPolyhedronFilter.cpp \
+    src/main.cpp \
+    src/mainwidget.cpp \
+    src/mvpmatrix.cpp \
+    src/Polyhedron.cpp \
+    src/Scene.cpp \
+    src/SpotLight.cpp
 
     HEADERS += \
-    mvpmatrix.h \
-    spotlight.h
+    src/Cube.h \
+    src/FaceShrinkerPolyhedronFilter.h \
+    src/mainwidget.h \
+    src/mvpmatrix.h \
+    src/Polyhedron.h \
+    src/Scene.h \
+    src/SpotLight.h
 
     RESOURCES += \
-        shaders.qrc \
-        textures.qrc \
-    vshadershadowmap.vsh \
-    fshadershadowmap.fsh \
-    basicshaderf.fsh \
-    basicshaderv.vsh
+        shaders.qrc
 
-#}
-
-# install
-#target.path = $$[QT_INSTALL_EXAMPLES]/opengl/cube
-#INSTALLS += target
-
-simulator: warning(This example might not fully work on Simulator platform)
-
-HEADERS += \
-    Polyhedron.h \
-    Cube.h \
-    PolyhedronDrawer.h \
-    FaceShrinkerPolyhedronFilter.h \
-    Scene.h \
-    mainwidget.h
-
-DISTFILES +=
+    QT += opengl

@@ -59,42 +59,14 @@ void MainWidget::timerEvent(QTimerEvent *)
 
 void MainWidget::initializeGL()
 {
-    initializeOpenGLFunctions();
-    glClearColor(0.1, 0.1, 0.1, 1);
-    initShaders();
-
-    // Enable depth buffer
-    glEnable(GL_DEPTH_TEST);
-
-    // Enable back face culling
-//    glEnable(GL_CULL_FACE);
-
     scene.init();
 
     // Use QBasicTimer because its faster than QTimer
     timer.start(12, this);
 }
 
-void MainWidget::initShaders()
-{
-    programPainter.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/vshader.glsl");
-    programPainter.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/fshader.glsl");
-    programPainter.link();
-
-    programShadowProjection.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/vshadershadowmap.vsh");
-    programShadowProjection.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/fshadershadowmap.fsh");
-    programShadowProjection.link();
-
-    testShader.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/basicshaderv.vsh");
-    testShader.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/basicshaderf.fsh");
-    testShader.link();
-}
-
 void MainWidget::resizeGL(int w, int h)
 {
-    // Set OpenGL viewport to cover whole widget
-    glViewport(0, 0, w, h);
-
     // Calculate aspect ratio
     qreal aspect = qreal(w) / qreal(h ? h : 1);
 
@@ -106,52 +78,30 @@ void MainWidget::resizeGL(int w, int h)
 
     // Set perspective projection
     projection.perspective(fov, aspect, zNear, zFar);
+
+    scene.setProjectionMatrix(projection);
+    scene.setViewPortDImension({(float)w, (float)h});
+    scene.setViewPortPosition({0, 0});
 }
 
 void MainWidget::paintGL()
 {
-//    resize(400, 400);
+    QMatrix4x4 viewMatrix;
+    viewMatrix.setToIdentity();
+    viewMatrix.translate(0, 0, -10);
+    viewMatrix.rotate(rotation);
 
-    QMatrix4x4 MV;
-    MV.setToIdentity();
-    MV.translate(0, 0, -10);
-    MV.rotate(rotation);
+    scene.setViewMatrix(viewMatrix);
 
     // *************************************************************
     // Uncomment to render the scene with basic shaders
     // *************************************************************
 
-//    testShader.bind();
-
-//    testShader.setUniformValue("MVP", projection * MV);
-
-//    glClearColor(0, 0, 0, 1);
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-//    scene.drawTest(&testShader);
-
-//    testShader.release();
+//    scene.drawBasic();
 
     // *************************************************************
     // Uncomment to render the scene with light and shadow
     // *************************************************************
 
-    programShadowProjection.bind();
-
-    scene.drawShadow(&programShadowProjection);
-
-    programShadowProjection.release();
-
-
-    programPainter.bind();
-
-    glViewport(0, 0, width(), height());
-
-    programPainter.setUniformValue("mvp_matrix", projection * MV);
-    programPainter.setUniformValue("matrixMV", MV);
-
-    // Draw scene
-    scene.draw(&programPainter);
-
-    programPainter.release();
+    scene.drawRender();
 }

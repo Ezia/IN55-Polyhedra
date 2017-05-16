@@ -1,7 +1,6 @@
 #ifndef MAINWIDGET_H
 #define MAINWIDGET_H
 
-#include "PolyhedronDrawer.h"
 #include "Scene.h"
 
 // math
@@ -16,7 +15,7 @@
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
 
-class MainWidget : public QOpenGLWidget, protected QOpenGLFunctions
+class MainWidget : public QOpenGLWidget
 {
     Q_OBJECT
 
@@ -33,8 +32,6 @@ protected:
     void resizeGL(int w, int h);
     void paintGL();
 
-    void initShaders();
-
 private:
     // motion and redering matrice
     QBasicTimer timer;
@@ -46,9 +43,6 @@ private:
 
     // scene
     Scene scene;
-
-    // reder objects
-    QOpenGLShaderProgram programPainter, programShadowProjection, testShader;
 };
 
 #endif // MAINWIDGET_H

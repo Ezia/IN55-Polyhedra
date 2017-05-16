@@ -141,6 +141,21 @@ public:
     // this function should not generate overhead when the structure should not be modified
     virtual void update() {}
 
+    // set the same color for every face
+    void setColor(QVector3D color) {update(); for (int i = 0; i < m_faces.size(); i++) m_faces[i]->setColor(color); m_buffersComputed = false;}
+
+    int getVertexNbr() const {return m_vertices.size();}
+    int getFaceNbr() const {return m_faces.size();}
+    // face vertices should NOT be modified
+    PolyhedronFace* getFace(int id) const {assert(id >= 0 && id < m_faces.size()); return m_faces[id];}
+    PolyhedronVertex* getVertex(int id) const {assert(id >= 0 && id < m_vertices.size()); return m_vertices[id];}
+
+    // rendering
+    // Assumes the given shader program has been bound
+    void drawRender(QOpenGLShaderProgram* program);
+    void drawShadow(QOpenGLShaderProgram* program);
+    void drawBasic(QOpenGLShaderProgram* program);
+
     // remove all faces and vertices
     void removeAll() {deleteFaces(); deleteVertices(); m_buffersComputed = false;}
     void removeAllFaces() {deleteFaces(); m_buffersComputed = false;}
@@ -151,24 +166,7 @@ public:
     void addVertices(QList<PolyhedronVertex> vertices) {for (int i = 0; i < vertices.size(); i++) addVertex(vertices[i]); m_buffersComputed = false;}
     void addFace(QList<int> indices, QVector3D color = WHITE);
 
-    // set the same color for every face
-    void setColor(QVector3D color) {for (int i = 0; i < m_faces.size(); i++) m_faces[i]->setColor(color); m_buffersComputed = false;}
-
-    int getVertexNbr() const {return m_vertices.size();}
-    int getFaceNbr() const {return m_faces.size();}
-    // face vertices should NOT be modified
-    PolyhedronFace* getFace(int id) const {assert(id >= 0 && id < m_faces.size()); return m_faces[id];}
-    PolyhedronVertex* getVertex(int id) const {assert(id >= 0 && id < m_vertices.size()); return m_vertices[id];}
-
-    // rendering
-    // Assumes the given shader program has been bound
-    // TODO
-    void drawRender(QOpenGLShaderProgram* program);
-    void drawShadow(QOpenGLShaderProgram* program);
-    void drawTest(QOpenGLShaderProgram* program);
-
 private:
-    // TODO : make everything private
 
     void deleteFaces() {for (int i = 0; i < m_faces.size(); i++) delete m_faces[i]; m_faces.clear();}
     void deleteVertices() {for (int i = 0; i < m_vertices.size(); i++) delete m_vertices[i]; m_vertices.clear();}
@@ -180,14 +178,12 @@ private:
     QOpenGLBuffer m_vertexBuffer, m_indexBuffer;
     GLsizei m_indexNbr;
 
-    // TODO : update
     bool m_buffersComputed;
 
     void updateBuffers();
 
     // function called
-    // TODO : re-write function
-    void updateRendering() {initializeOpenGLFunctions(); this->update(); updateBuffers();}
+    void updateRendering() {initializeOpenGLFunctions(); update(); updateBuffers();}
 };
 
 #endif // POLYHEDRA_H

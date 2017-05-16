@@ -19,6 +19,7 @@ void PolyhedronFace::computeNormal()
 
 
 Polyhedron::Polyhedron(Polyhedron const& polyhedron) :
+    QOpenGLFunctions(),
     m_vertices(),
     m_faces(),
     m_vertexBuffer(QOpenGLBuffer::VertexBuffer),
@@ -58,6 +59,8 @@ Polyhedron &Polyhedron::operator=(const Polyhedron &polyhedron)
     }
 
     m_buffersComputed = false;
+
+    return *this;
 }
 
 void Polyhedron::addFace(QList<int> indices, QVector3D color)
@@ -127,7 +130,7 @@ void Polyhedron::drawShadow(QOpenGLShaderProgram *program)
     m_vertexBuffer.release();
 }
 
-void Polyhedron::drawTest(QOpenGLShaderProgram *program)
+void Polyhedron::drawBasic(QOpenGLShaderProgram *program)
 {
     updateRendering();
 
@@ -244,8 +247,6 @@ void Polyhedron::updateBuffers()
         // Transfer indices to buffer
         m_indexBuffer.bind();
         m_indexBuffer.allocate(tabIndices, indices.size() * sizeof(GLushort));
-        int size = m_indexBuffer.size();
-        int size1 = sizeof(GLushort);
         m_indexBuffer.release();
 
         m_indexNbr = indices.size();

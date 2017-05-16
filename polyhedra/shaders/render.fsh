@@ -1,12 +1,7 @@
-#ifdef GL_ES
-// Set default precision to medium
-precision mediump int;
-precision mediump float;
-#endif
-
 uniform vec3 spotLightAmbiant;
 uniform vec3 spotLightDiffusion;
 uniform vec3 spotLightSpecular;
+uniform float shadowBias;
 
 varying vec4 positionInSpotLightProjection;
 
@@ -16,7 +11,7 @@ varying vec3 normalVec;
 varying vec3 lightVec;
 varying vec3 reflexionVec;
 varying vec3 viewVec;
-
+varying vec4 color;
 
 void main() {
 
@@ -29,11 +24,11 @@ void main() {
             inSpotLight = 0.;
         } else if ((spotPos.z) > 1. || spotPos.z < 0.) {
             inSpotLight = 0.;
-        } else if ((texture2D(spotLightDepth, spotPos.xy).z)+0.005 < (spotPos.z)) {
+        } else if ((texture2D(spotLightDepth, spotPos.xy).z)+shadowBias < (spotPos.z)) {
             inSpotLight = 0.;
         }
 
-        gl_FragColor = gl_Color*(vec4(spotLightAmbiant ,1)
+        gl_FragColor = color*(vec4(spotLightAmbiant ,1)
                 + inSpotLight*(
                     clamp(dot(lightVec, normalVec), 0, 1)*vec4(spotLightDiffusion, 1)
 //                    + pow(clamp(dot(reflexionVec, viewVec), 0, 1), 1)*vec4(spotLightSpecular, 1)

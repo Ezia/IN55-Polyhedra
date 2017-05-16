@@ -1,4 +1,4 @@
-#include "spotlight.h"
+#include "SpotLight.h"
 
 void SpotLight::updateShadowTexture()
 {

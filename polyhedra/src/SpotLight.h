@@ -20,6 +20,7 @@ public:
         m_nearPlan(2),
         m_farPlan(50),
         m_pixelPerDegree(20),
+        m_shadowTextureBias(0.005),
         m_shadowTexture(NULL),
         m_projectionUpToDate(false),
         m_shadowTextureUpToDate(false),
@@ -41,6 +42,7 @@ public:
     float getNearPlan() const {return m_nearPlan;}
     float getFarPlan() const {return m_farPlan;}
     float getPixelPerDegree() const {return m_pixelPerDegree;}
+    float getShadowTextureBias() const {return m_shadowTextureBias;}
     QMatrix4x4 getProjection() {updateProjection(); return m_projection;}
     QOpenGLFramebufferObject* getShadowTexture() {updateShadowTexture(); return m_shadowTexture;}
 
@@ -55,6 +57,7 @@ public:
     void setVerticalAngle(float verticalAngle) {m_verticalAngle = verticalAngle; m_projectionUpToDate = false;  m_shadowTextureUpToDate = false;}
     void setHorizontalAngle(float horizontalAngle) {m_horizontalAngle = horizontalAngle; m_projectionUpToDate = false;  m_shadowTextureUpToDate = false;}
     void setPixelPerDegree(float pixelPerDegree) {m_pixelPerDegree = pixelPerDegree; m_shadowTextureUpToDate = false;}
+    void setShadowTextureBias(float shadowTextureBias) {m_shadowTextureBias = shadowTextureBias;}
 
 private:
     void updateShadowTexture();
@@ -63,7 +66,7 @@ private:
     // transform from world ref to projected light ref
     QMatrix4x4 m_projection;
     QVector3D m_direction, m_upDirection, m_position;
-    float m_verticalAngle, m_horizontalAngle, m_nearPlan, m_farPlan, m_pixelPerDegree;
+    float m_verticalAngle, m_horizontalAngle, m_nearPlan, m_farPlan, m_pixelPerDegree, m_shadowTextureBias;
 
     QOpenGLFramebufferObject* m_shadowTexture;
 
