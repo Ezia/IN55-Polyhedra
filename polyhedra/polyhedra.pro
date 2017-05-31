@@ -13,21 +13,21 @@ INCLUDEPATH += src
 SOURCES += \
     src/Cube.cpp \
     src/FaceShrinkerPolyhedronFilter.cpp \
-    src/main.cpp \
-    src/mainwidget.cpp \
-    src/mvpmatrix.cpp \
     src/Polyhedron.cpp \
     src/Scene.cpp \
-    src/SpotLight.cpp
+    src/SpotLight.cpp \
+    src/MainWidget.cpp \
+    src/MVPMatrix.cpp \
+    src/Main.cpp
 
     HEADERS += \
     src/Cube.h \
     src/FaceShrinkerPolyhedronFilter.h \
-    src/mainwidget.h \
-    src/mvpmatrix.h \
     src/Polyhedron.h \
     src/Scene.h \
-    src/SpotLight.h
+    src/SpotLight.h \
+    src/MVPMatrix.h \
+    src/MainWidget.h
 
     RESOURCES += \
         shaders.qrc

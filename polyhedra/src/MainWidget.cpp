@@ -1,11 +1,11 @@
-#include "mainwidget.h"
+#include "MainWidget.h"
 
 // motion
 #include <QMouseEvent>
 
 // math
 #include <math.h>
-#include "mvpmatrix.h"
+#include "MVPMatrix.h"
 
 MainWidget::MainWidget(QWidget *parent) :
     QOpenGLWidget(parent),
