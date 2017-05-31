@@ -30,8 +30,8 @@ void main() {
 
         gl_FragColor = color*(vec4(spotLightAmbiant ,1)
                 + inSpotLight*(
-                    clamp(dot(lightVec, normalVec), 0, 1)*vec4(spotLightDiffusion, 1)
-//                    + pow(clamp(dot(reflexionVec, viewVec), 0, 1), 1)*vec4(spotLightSpecular, 1)
+                    clamp(dot(lightVec, normalVec), 0.0f, 1.0f)*vec4(spotLightDiffusion, 1)
+//                    + pow(clamp(dot(reflexionVec, viewVec), 0.0f, 1.0f), 1)*vec4(spotLightSpecular, 1)
                 ));
 }
 
