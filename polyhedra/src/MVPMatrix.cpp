@@ -1,4 +1,4 @@
-#include "mvpmatrix.h"
+#include "MVPMatrix.h"
 
 MVPMatrix::MVPMatrix()
 {
