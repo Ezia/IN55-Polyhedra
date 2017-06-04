@@ -272,6 +272,6 @@ void PolyhedronVertex::computeNormal()
     for (int i = 0; i < m_faces.size(); i++) {
         m_normal+= m_faces.at(i)->getNormal();
     }
-    m_normal *= 1/m_faces.size();
+    m_normal.normalize();
     m_normalComputed = true;
 }

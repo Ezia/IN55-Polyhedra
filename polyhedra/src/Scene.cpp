@@ -66,7 +66,7 @@ void Scene::init()
     m_spotLight.setPixelPerDegree(40);
     m_spotLight.setNearPlan(0.5);
     m_spotLight.setFarPlan(15);
-    m_spotLight.setAmbiant({0.1, 0.1, 0.1});
+    m_spotLight.setAmbiant({0.5, 0.5, 0.5});
     m_spotLight.setDiffuse({0.8, 0.8, 0.8});
     m_spotLight.setSpecular({1, 1, 1});
     m_spotLight.setShadowTextureBias(0.005);
