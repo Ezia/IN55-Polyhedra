@@ -194,6 +194,7 @@ void Polyhedron::updateBuffers()
             for ( int j = 0; j < face->getVertexNbr(); j++) {
                 PolyhedronVertex* vertex = face->getVertex(j);
                 if (m_smoothNormals) {
+                    vertex->getNormal();
                     vertices.push_back({vertex->getPosition(), face->getColor(), vertex->getNormal()});
                 } else {
                     vertices.push_back({vertex->getPosition(), face->getColor(), face->getNormal()});
@@ -271,6 +272,6 @@ void PolyhedronVertex::computeNormal()
     for (int i = 0; i < m_faces.size(); i++) {
         m_normal+= m_faces.at(i)->getNormal();
     }
-    m_normal *= m_faces.size();
+    m_normal *= 1/m_faces.size();
     m_normalComputed = true;
 }

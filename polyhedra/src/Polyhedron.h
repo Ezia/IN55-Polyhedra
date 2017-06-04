@@ -156,7 +156,7 @@ public:
         m_buffersComputed(false),
         m_smoothNormals(smoothNormals)
     {
-        setVertices(vertices);
+        addVertices(vertices);
     }
 
     Polyhedron(Polyhedron const& polyhedron);
