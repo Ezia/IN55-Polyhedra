@@ -54,8 +54,6 @@ void Scene::init()
     Sphere* sphere1 = new Sphere;
     sphere1->setPosition({-1., 0, 1.});
     sphere1->setRadius(1.);
-    sphere1->setXYResolution(8);
-    sphere1->setXZResolution(4);
     sphere1->setColor(GREEN);
     m_objects.append(sphere1);
 
