@@ -1,7 +1,7 @@
 #include "Scene.h"
 
 #include "Cube.h"
-#include "FaceShrinkerPolyhedronFilter.h"
+#include "FaceShrinkingFilter.h"
 
 
 void Scene::init()
@@ -28,7 +28,12 @@ void Scene::init()
     // small cube
     Cube* cube = new Cube;
     cube->setColor(GREEN);
-    m_objects.append(cube);
+    FaceShrinkingFilter* faceSkrinkingFilter = new FaceShrinkingFilter();
+    faceSkrinkingFilter->setInput(cube);
+    faceSkrinkingFilter->setFactor(0.5);
+    faceSkrinkingFilter->update();
+    Cube* filteredCube = (Cube*) faceSkrinkingFilter->getOutput();
+    m_objects.append(filteredCube);
 
     // base surface
     Cube* cube2  = new Cube;
