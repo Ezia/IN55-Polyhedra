@@ -7,9 +7,9 @@ void Sphere::update()
     if (!m_upToDate) {
         removeAll();
 
-        addVertex(PolyhedronVertex({m_position.x(), m_position.y(), m_radius * m_position.z()}));
+        addVertex(PolyhedronVertex({m_position.x(), m_position.y(), m_radius + m_position.z()}));
 
-        for (int j = 1 ; j < m_xzResolution-1 ; j++)
+        for (int j = 1 ; j < m_xzResolution ; j++)
         {
             float xzTheta = M_PI_2 - (M_PI * ((float) j / m_xzResolution));
             float projectedRadius = m_radius * cos(xzTheta);
@@ -24,7 +24,7 @@ void Sphere::update()
             }
         }
 
-        addVertex(PolyhedronVertex({m_position.x(), m_position.y(), -m_radius * m_position.z()}));
+        addVertex(PolyhedronVertex({m_position.x(), m_position.y(), -m_radius + m_position.z()}));
 
         for (int i = 1 ; i < m_xyResolution ; i++)
         {

@@ -27,14 +27,14 @@ void Scene::init()
     /************************************************/
 
     // small cube
-    Cube* cube = new Cube;
-    cube->setColor(GREEN);
-    FaceShrinkingFilter* faceSkrinkingFilter = new FaceShrinkingFilter();
-    faceSkrinkingFilter->setInput(cube);
-    faceSkrinkingFilter->setFactor(0.5);
-    faceSkrinkingFilter->update();
-    Cube* filteredCube = (Cube*) faceSkrinkingFilter->getOutput();
-    m_objects.append(filteredCube);
+//    Cube* cube = new Cube;
+//    cube->setColor(GREEN);
+//    FaceShrinkingFilter* faceSkrinkingFilter = new FaceShrinkingFilter();
+//    faceSkrinkingFilter->setInput(cube);
+//    faceSkrinkingFilter->setFactor(0.5);
+//    faceSkrinkingFilter->update();
+//    Cube* filteredCube = (Cube*) faceSkrinkingFilter->getOutput();
+//    m_objects.append(filteredCube);
 
     // base surface
     Cube* cube2  = new Cube;
@@ -44,16 +44,18 @@ void Scene::init()
     m_objects.append(cube2);
 
     // another cube
-    Cube* cube3 = new Cube;
+/*    Cube* cube3 = new Cube;
     cube3->setPosition({-1.1, 0, 0});
     cube3->setDimension({1, 0.5, 0.5});
     cube3->setColor(YELLOW);
-    m_objects.append(cube3);
+    m_objects.append(cube3)*/;
 
     // a sphere
     Sphere* sphere1 = new Sphere;
     sphere1->setPosition({-1., 0, 1.});
     sphere1->setRadius(1.);
+    sphere1->setXYResolution(4);
+    sphere1->setXZResolution(3);
     sphere1->setColor(GREEN);
     m_objects.append(sphere1);
 
