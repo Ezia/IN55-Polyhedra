@@ -32,22 +32,30 @@ void Sphere::update()
         }
         addFace({0, m_xyResolution, 1});
 
-        for (int j = 1 ; j < m_xzResolution-1 ; j++)
+        for (int j = 0 ; j < m_xzResolution-2 ; j++)
         {
             for (int i = 1 ; i < m_xyResolution ; i++) {
-                addFace({j*m_xzResolution + i, (j+1)*m_xzResolution + i, (j+1)*m_xzResolution + i + 1});
-                addFace({j*m_xzResolution + i, (j+1)*m_xzResolution + i + 1, j*m_xzResolution + i + 1});
+                addFace({j*m_xyResolution + i,
+                         (j+1)*m_xyResolution + i,
+                         (j+1)*m_xyResolution + i + 1,
+                         j*m_xyResolution + i + 1});
             }
-            addFace({(j+1)*m_xzResolution, (j+2)*m_xzResolution, (j+1)*m_xzResolution + 1});
-            addFace({(j+1)*m_xzResolution, (j+1)*m_xzResolution + 1, j*m_xzResolution + 1});
+            addFace({(j+1)*m_xyResolution,
+                     (j+2)*m_xyResolution,
+                     (j+1)*m_xyResolution + 1,
+                     j*m_xyResolution + 1});
         }
 
 
         for (int i = 1 ; i < m_xyResolution ; i++)
         {
-            addFace({(m_xzResolution-2)*m_xyResolution + 1, (m_xzResolution-3)*m_xyResolution + i+1, (m_xzResolution-3)*m_xyResolution + i});
+            addFace({(m_xzResolution-2)*m_xyResolution + 1,
+                     (m_xzResolution-3)*m_xyResolution + i+1,
+                     (m_xzResolution-3)*m_xyResolution + i});
         }
-        addFace({(m_xzResolution-2)*m_xyResolution + 1, (m_xzResolution-3)*m_xyResolution + 1, (m_xzResolution-2)*m_xyResolution});
+        addFace({(m_xzResolution-2)*m_xyResolution + 1,
+                 (m_xzResolution-3)*m_xyResolution + 1,
+                 (m_xzResolution-2)*m_xyResolution});
 
         m_upToDate = true;
     }
