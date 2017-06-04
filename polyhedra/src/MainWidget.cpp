@@ -5,7 +5,6 @@
 
 // math
 #include <math.h>
-#include "MVPMatrix.h"
 
 MainWidget::MainWidget(QWidget *parent) :
     QOpenGLWidget(parent),
