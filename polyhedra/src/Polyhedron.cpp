@@ -25,7 +25,8 @@ Polyhedron::Polyhedron(Polyhedron const& polyhedron) :
     m_vertexBuffer(QOpenGLBuffer::VertexBuffer),
     m_indexBuffer(QOpenGLBuffer::IndexBuffer),
     m_indexNbr(0),
-    m_buffersComputed(false)
+    m_buffersComputed(false),
+    m_smoothNormals(polyhedron.m_smoothNormals)
 {
     for (int i = 0; i < polyhedron.m_vertices.size(); i++) {
         m_vertices.append(new PolyhedronVertex(*polyhedron.m_vertices[i]));
@@ -44,6 +45,8 @@ Polyhedron::Polyhedron(Polyhedron const& polyhedron) :
 Polyhedron &Polyhedron::operator=(const Polyhedron &polyhedron)
 {
     removeAll();
+
+    m_smoothNormals = polyhedron.m_smoothNormals;
 
     for (int i = 0; i < polyhedron.m_vertices.size(); i++) {
         m_vertices.append(new PolyhedronVertex(*polyhedron.m_vertices[i]));
@@ -190,7 +193,11 @@ void Polyhedron::updateBuffers()
             // Add vertices to list
             for ( int j = 0; j < face->getVertexNbr(); j++) {
                 PolyhedronVertex* vertex = face->getVertex(j);
-                vertices.push_back({vertex->getPosition(), face->getColor(), face->getNormal()});
+                if (m_smoothNormals) {
+                    vertices.push_back({vertex->getPosition(), face->getColor(), vertex->getNormal()});
+                } else {
+                    vertices.push_back({vertex->getPosition(), face->getColor(), face->getNormal()});
+                }
             }
 
             // Add indices to list
@@ -253,4 +260,17 @@ void Polyhedron::updateBuffers()
 
         m_buffersComputed = true;
     }
+}
+
+void PolyhedronVertex::computeNormal()
+{
+    assert(m_faces.size() > 0);
+    m_normal[0] = 0;
+    m_normal[1] = 0;
+    m_normal[2] = 0;
+    for (int i = 0; i < m_faces.size(); i++) {
+        m_normal+= m_faces.at(i)->getNormal();
+    }
+    m_normal *= m_faces.size();
+    m_normalComputed = true;
 }

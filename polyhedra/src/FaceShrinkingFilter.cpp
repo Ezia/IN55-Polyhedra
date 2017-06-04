@@ -48,11 +48,11 @@ void FaceShrinkingFilter::update()
     }
     else if (factor == 0.)
     {
-        output = new Polyhedron();
+        output = new Polyhedron(false);
     }
     else
     {
-        output = new Polyhedron();
+        output = new Polyhedron(false);
         // loop over faces
         for (int j = 0; j < input->getFaceNbr(); j++) {
             PolyhedronFace* face = input->getFace(j);
