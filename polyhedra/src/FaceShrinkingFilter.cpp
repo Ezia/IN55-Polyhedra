@@ -10,7 +10,9 @@ FaceShrinkingFilter::FaceShrinkingFilter()
 
 FaceShrinkingFilter::~FaceShrinkingFilter()
 {
-    delete output;
+    if (output) {
+        delete output;
+    }
 }
 
 void FaceShrinkingFilter::setInput(Polyhedron *input)
@@ -50,6 +52,7 @@ void FaceShrinkingFilter::update()
     }
     else
     {
+        output = new Polyhedron();
         // loop over faces
         for (int j = 0; j < input->getFaceNbr(); j++) {
             PolyhedronFace* face = input->getFace(j);
@@ -77,7 +80,5 @@ void FaceShrinkingFilter::update()
             output->addFace(verticesIndices, face->getColor());
         }
     }
-
-    output->addVertices(newVertices);
 
 }
