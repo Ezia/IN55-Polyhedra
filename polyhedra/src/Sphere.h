@@ -9,6 +9,7 @@ class Sphere : public Polyhedron
 {
 public:
     Sphere(QVector3D position = {0., 0., 0.}, float radius = 1., int xyResolution = 20, int xzResolution = 10) :
+        Polyhedron(true),
         m_position(position),
         m_radius(radius),
         m_xyResolution(xyResolution),

@@ -51,13 +51,13 @@ void Scene::init()
     m_objects.append(cube3);
 
     // a sphere
-    Sphere* sphere1 = new Sphere;
-    sphere1->setPosition({-1., 0, 1.});
-    sphere1->setRadius(1.);
-    sphere1->setXYResolution(8);
-    sphere1->setXZResolution(4);
-    sphere1->setColor(GREEN);
-    m_objects.append(sphere1);
+//    Sphere* sphere1 = new Sphere;
+//    sphere1->setPosition({-1., 0, 1.});
+//    sphere1->setRadius(1.);
+//    sphere1->setXYResolution(8);
+//    sphere1->setXZResolution(4);
+//    sphere1->setColor(GREEN);
+//    m_objects.append(sphere1);
 
     // spot light
     m_spotLight.setDirection({-1, 0, -1});
