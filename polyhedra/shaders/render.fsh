@@ -42,7 +42,8 @@ void main() {
             specular = vec3(0.0, 0.0, 0.0); // no specular reflection
         } else {
             specular = color*spotLightSpecular
-                *pow(max(0., dot(f_viewVec, f_normalVec)), 10);
+                *pow(max(0., dot(f_viewVec, f_normalVec)), 10)
+                    *max(0., dot(f_lightVec, f_normalVec)); // smoothly go from light to shadow
         }
 
         gl_FragColor = vec4(ambiant+ inSpotLight*(diffuse + specular), 1.);
