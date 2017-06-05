@@ -52,9 +52,9 @@ void Scene::init()
 
     // a sphere
     Sphere* sphere1 = new Sphere;
-    sphere1->setPosition({0, 0, 1.});
+    sphere1->setPosition({0, 0, 0.});
     sphere1->setRadius(1.);
-    sphere1->setXYResolution(10);
+    sphere1->setXYResolution(50);
     sphere1->setXZResolution(20);
     sphere1->setColor(GREEN);
 //    FaceShrinkingFilter* faceSkrinkingFilter = new FaceShrinkingFilter();
@@ -66,16 +66,16 @@ void Scene::init()
     m_objects.append(sphere1);
 
     // spot light
-    m_spotLight.setDirection({-1, 0, -1});
-    m_spotLight.setUpDirection({0, 0, 1});
-    m_spotLight.setPosition({1, -1, 3});
+    m_spotLight.setDirection({0, 0, -1});
+    m_spotLight.setUpDirection({0, 1, 0});
+    m_spotLight.setPosition({0, 0, 3});
     m_spotLight.setHorizontalAngle(60);
     m_spotLight.setVerticalAngle(40);
     m_spotLight.setPixelPerDegree(40);
     m_spotLight.setNearPlan(0.5);
     m_spotLight.setFarPlan(15);
-    m_spotLight.setAmbiant({0.5, 0.5, 0.5});
-    m_spotLight.setDiffuse({0.3, 0.3, 0.3});
+    m_spotLight.setAmbiant({0.2, 0.2, 0.2});
+    m_spotLight.setDiffuse({0.6, 0.6, 0.6});
     m_spotLight.setSpecular({1., 1., 1.});
     m_spotLight.setShadowTextureBias(0.005);
 }
@@ -103,6 +103,7 @@ void Scene::drawRender()
 
     m_renderProgram.setUniformValue("mvp_matrix", m_projectionMatrix * m_viewMatrix);
     m_renderProgram.setUniformValue("matrixMV", m_viewMatrix);
+    m_renderProgram.setUniformValue("invMatrixMV", m_viewMatrix.inverted());
     m_renderProgram.setUniformValue("spotLightAmbiant", m_spotLight.getAmbiant());
     m_renderProgram.setUniformValue("spotLightDiffusion", m_spotLight.getDiffuse());
     m_renderProgram.setUniformValue("spotLightSpecular", m_spotLight.getSpecular());
