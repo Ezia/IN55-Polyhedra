@@ -46,16 +46,15 @@ void Sphere::update()
                      j*m_xyResolution + 1});
         }
 
-
         for (int i = 1 ; i < m_xyResolution ; i++)
         {
-            addFace({(m_xzResolution-2)*m_xyResolution + 1,
-                     (m_xzResolution-3)*m_xyResolution + i+1,
-                     (m_xzResolution-3)*m_xyResolution + i});
+            addFace({(m_xzResolution-1)*m_xyResolution + 1,
+                     (m_xzResolution-2)*m_xyResolution + i+1,
+                     (m_xzResolution-2)*m_xyResolution + i});
         }
-        addFace({(m_xzResolution-2)*m_xyResolution + 1,
-                 (m_xzResolution-3)*m_xyResolution + 1,
-                 (m_xzResolution-2)*m_xyResolution});
+        addFace({(m_xzResolution-1)*m_xyResolution + 1,
+                 (m_xzResolution-2)*m_xyResolution + 1,
+                 (m_xzResolution-1)*m_xyResolution});
 
         m_upToDate = true;
     }

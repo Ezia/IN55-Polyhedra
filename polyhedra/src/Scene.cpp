@@ -52,12 +52,18 @@ void Scene::init()
 
     // a sphere
     Sphere* sphere1 = new Sphere;
-    sphere1->setPosition({-1., 0, 1.});
+    sphere1->setPosition({0, 0, 1.});
     sphere1->setRadius(1.);
-    sphere1->setXYResolution(4);
-    sphere1->setXZResolution(3);
+    sphere1->setXYResolution(100);
+    sphere1->setXZResolution(50);
     sphere1->setColor(GREEN);
-    m_objects.append(sphere1);
+    FaceShrinkingFilter* faceSkrinkingFilter = new FaceShrinkingFilter();
+    faceSkrinkingFilter->setInput(sphere1);
+    faceSkrinkingFilter->setFactor(0.5);
+    faceSkrinkingFilter->update();
+    Sphere* filteredSphere = (Sphere*) faceSkrinkingFilter->getOutput();
+    m_objects.append(filteredSphere);
+//    m_objects.append(sphere1);
 
     // spot light
     m_spotLight.setDirection({-1, 0, -1});
