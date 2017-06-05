@@ -14,6 +14,11 @@ varying vec3 viewVec;
 varying vec4 color;
 
 void main() {
+        normalize(normalVec);
+        normalize(lightVec);
+        normalize(reflexionVec);
+        normalize(viewVec);
+
 
         float inSpotLight = 1.;
 
@@ -28,11 +33,12 @@ void main() {
             inSpotLight = 0.;
         }
 
-        gl_FragColor = color*(vec4(spotLightAmbiant ,1)
-                + inSpotLight*(
-                    clamp(dot(lightVec, normalVec), 0.0f, 1.0f)*vec4(spotLightDiffusion, 1)
-//                    + pow(clamp(dot(reflexionVec, viewVec), 0.0f, 1.0f), 1)*vec4(spotLightSpecular, 1)
-                ));
+        gl_FragColor = //clamp(
+                        color*vec4(spotLightAmbiant ,1)
+                        + inSpotLight*color*dot(lightVec, normalVec)*vec4(spotLightDiffusion, 1)
+                        + inSpotLight*vec4(pow(clamp(dot(viewVec, reflexionVec), 0., 1.), 1000)*spotLightSpecular, 1.)
+//                    ,0., 1.)
+                ;
 }
 
 

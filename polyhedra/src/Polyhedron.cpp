@@ -194,7 +194,6 @@ void Polyhedron::updateBuffers()
             for ( int j = 0; j < face->getVertexNbr(); j++) {
                 PolyhedronVertex* vertex = face->getVertex(j);
                 if (m_smoothNormals) {
-                    vertex->getNormal();
                     vertices.push_back({vertex->getPosition(), face->getColor(), vertex->getNormal()});
                 } else {
                     vertices.push_back({vertex->getPosition(), face->getColor(), face->getNormal()});
@@ -203,9 +202,9 @@ void Polyhedron::updateBuffers()
 
             // Add indices to list
 
-            if (doubleFirstIndex){
+//            if (doubleFirstIndex){
                 indices.push_back(currVertexId);
-            }
+//            }
             indices.push_back(currVertexId);
 
             int incrIndexValue = 1;
@@ -217,6 +216,7 @@ void Polyhedron::updateBuffers()
                 } else {
                     indices.push_back(currVertexId+incrIndexValue);
                 }
+//                doubleFirstIndex = !doubleFirstIndex;
                 indexAddedNbr++;
             }
 
@@ -226,7 +226,7 @@ void Polyhedron::updateBuffers()
             indices.push_back(indices.last());
 
             // update vertex index
-            doubleFirstIndex = face->getVertexNbr()%2 == 0;
+//            doubleFirstIndex = face->getVertexNbr()%2 != 0;
         }
 
         // remove last index
@@ -270,7 +270,7 @@ void PolyhedronVertex::computeNormal()
     m_normal[1] = 0;
     m_normal[2] = 0;
     for (int i = 0; i < m_faces.size(); i++) {
-        m_normal+= m_faces.at(i)->getNormal();
+        m_normal += m_faces.at(i)->getNormal();
     }
     m_normal.normalize();
     m_normalComputed = true;

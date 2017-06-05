@@ -87,7 +87,7 @@ void MainWidget::paintGL()
 {
     QMatrix4x4 viewMatrix;
     viewMatrix.setToIdentity();
-    viewMatrix.translate(0, 0, -5);
+    viewMatrix.translate(0, 0, -8);
     viewMatrix.rotate(rotation);
 
     scene.setViewMatrix(viewMatrix);

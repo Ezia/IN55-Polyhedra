@@ -33,7 +33,7 @@ void main()
         normalize(lightVec);
         reflexionVec = 2.*dot(lightVec, normalVec)*normalVec - lightVec;
         normalize(reflexionVec);
-        viewVec = vec4(matrixMV * vec4(a_position, 1)).xyz;
+        viewVec = (- vec4(matrixMV * vec4(0, 0, 0, 1)) + vec4(matrixMV * vec4(a_position, 1))).xyz;
         normalize(viewVec);
 
         positionInSpotLightProjection = spotLightMVP * vec4(a_position, 1);

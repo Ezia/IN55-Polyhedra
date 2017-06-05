@@ -54,16 +54,16 @@ void Scene::init()
     Sphere* sphere1 = new Sphere;
     sphere1->setPosition({0, 0, 1.});
     sphere1->setRadius(1.);
-    sphere1->setXYResolution(100);
-    sphere1->setXZResolution(50);
+    sphere1->setXYResolution(10);
+    sphere1->setXZResolution(20);
     sphere1->setColor(GREEN);
-    FaceShrinkingFilter* faceSkrinkingFilter = new FaceShrinkingFilter();
-    faceSkrinkingFilter->setInput(sphere1);
-    faceSkrinkingFilter->setFactor(0.5);
-    faceSkrinkingFilter->update();
-    Sphere* filteredSphere = (Sphere*) faceSkrinkingFilter->getOutput();
-    m_objects.append(filteredSphere);
-//    m_objects.append(sphere1);
+//    FaceShrinkingFilter* faceSkrinkingFilter = new FaceShrinkingFilter();
+//    faceSkrinkingFilter->setInput(sphere1);
+//    faceSkrinkingFilter->setFactor(0.5);
+//    faceSkrinkingFilter->update();
+//    Polyhedron* filteredSphere =  new Polyhedron(*faceSkrinkingFilter->getOutput());
+//    m_objects.append(filteredSphere);
+    m_objects.append(sphere1);
 
     // spot light
     m_spotLight.setDirection({-1, 0, -1});
@@ -75,8 +75,8 @@ void Scene::init()
     m_spotLight.setNearPlan(0.5);
     m_spotLight.setFarPlan(15);
     m_spotLight.setAmbiant({0.5, 0.5, 0.5});
-    m_spotLight.setDiffuse({0.8, 0.8, 0.8});
-    m_spotLight.setSpecular({1, 1, 1});
+    m_spotLight.setDiffuse({0.3, 0.3, 0.3});
+    m_spotLight.setSpecular({1., 1., 1.});
     m_spotLight.setShadowTextureBias(0.005);
 }
 
