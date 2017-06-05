@@ -30,7 +30,7 @@ void main()
 
         normalVec = a_normal;
         lightVec = spotLightPosition - a_position;
-        reflexionVec = reflect(lightVec, normalVec);
+        reflexionVec = reflect(-lightVec, normalVec);
         viewVec = vec3(invMatrixMV * vec4(0.0, 0.0, 0.0, 1.0) - vec4(a_position, 1));
 
         positionInSpotLightProjection = spotLightMVP * vec4(a_position, 1);
