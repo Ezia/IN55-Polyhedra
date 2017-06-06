@@ -4,7 +4,6 @@
 #include <QList>
 #include <Polyhedron.h>
 #include <QOpenGLShaderProgram>
-#include "MVPMatrix.h"
 
 #include "SpotLight.h"
 

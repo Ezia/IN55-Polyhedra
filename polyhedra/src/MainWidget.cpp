@@ -5,7 +5,6 @@
 
 // math
 #include <math.h>
-#include "MVPMatrix.h"
 
 MainWidget::MainWidget(QWidget *parent) :
     QOpenGLWidget(parent),
@@ -88,7 +87,7 @@ void MainWidget::paintGL()
 {
     QMatrix4x4 viewMatrix;
     viewMatrix.setToIdentity();
-    viewMatrix.translate(0, 0, -10);
+    viewMatrix.translate(0, 0, -8);
     viewMatrix.rotate(rotation);
 
     scene.setViewMatrix(viewMatrix);

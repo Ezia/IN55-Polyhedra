@@ -1,7 +1,8 @@
 #include "Scene.h"
 
 #include "Cube.h"
-#include "FaceShrinkerPolyhedronFilter.h"
+#include "Sphere.h"
+#include "FaceShrinkingFilter.h"
 
 
 void Scene::init()
@@ -26,9 +27,14 @@ void Scene::init()
     /************************************************/
 
     // small cube
-    Cube* cube = new Cube;
-    cube->setColor(GREEN);
-    m_objects.append(cube);
+    Cube* cube1 = new Cube;
+    cube1->setColor(GREEN);
+    FaceShrinkingFilter* cube1Filter = new FaceShrinkingFilter();
+    cube1Filter->setInput(cube1);
+    cube1Filter->setFactor(0.5);
+    cube1Filter->update();
+    Cube* filteredCube = (Cube*) cube1Filter->getOutput();
+    m_objects.append(filteredCube);
 
     // base surface
     Cube* cube2  = new Cube;
@@ -44,18 +50,33 @@ void Scene::init()
     cube3->setColor(YELLOW);
     m_objects.append(cube3);
 
+    // a sphere
+    Sphere* sphere1 = new Sphere;
+    sphere1->setPosition({0, 0, 0.});
+    sphere1->setRadius(1.);
+    sphere1->setXYResolution(50);
+    sphere1->setXZResolution(20);
+    sphere1->setColor(GREEN);
+    FaceShrinkingFilter* sphere1Filter = new FaceShrinkingFilter();
+    sphere1Filter->setInput(sphere1);
+    sphere1Filter->setFactor(0.5);
+    sphere1Filter->update();
+    Polyhedron* filteredSphere =  new Polyhedron(*sphere1Filter->getOutput());
+    m_objects.append(filteredSphere);
+//    m_objects.append(sphere1);
+
     // spot light
-    m_spotLight.setDirection({-1, 0, -1});
-    m_spotLight.setUpDirection({0, 0, 1});
-    m_spotLight.setPosition({1, -1, 3});
-    m_spotLight.setHorizontalAngle(60);
-    m_spotLight.setVerticalAngle(40);
+    m_spotLight.setDirection({0, 1, -1});
+    m_spotLight.setUpDirection({0, 1, 1});
+    m_spotLight.setPosition({0, -3, 3});
+    m_spotLight.setHorizontalAngle(120);
+    m_spotLight.setVerticalAngle(120);
     m_spotLight.setPixelPerDegree(40);
     m_spotLight.setNearPlan(0.5);
     m_spotLight.setFarPlan(15);
-    m_spotLight.setAmbiant({0.1, 0.1, 0.1});
-    m_spotLight.setDiffuse({0.8, 0.8, 0.8});
-    m_spotLight.setSpecular({1, 1, 1});
+    m_spotLight.setAmbiant({0.2, 0.2, 0.2});
+    m_spotLight.setDiffuse({0.6, 0.6, 0.6});
+    m_spotLight.setSpecular({1., 1., 1.});
     m_spotLight.setShadowTextureBias(0.005);
 }
 
@@ -82,6 +103,7 @@ void Scene::drawRender()
 
     m_renderProgram.setUniformValue("mvp_matrix", m_projectionMatrix * m_viewMatrix);
     m_renderProgram.setUniformValue("matrixMV", m_viewMatrix);
+    m_renderProgram.setUniformValue("invMatrixMV", m_viewMatrix.inverted());
     m_renderProgram.setUniformValue("spotLightAmbiant", m_spotLight.getAmbiant());
     m_renderProgram.setUniformValue("spotLightDiffusion", m_spotLight.getDiffuse());
     m_renderProgram.setUniformValue("spotLightSpecular", m_spotLight.getSpecular());

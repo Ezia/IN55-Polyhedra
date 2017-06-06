@@ -39,22 +39,42 @@
 // *********************************************************************
 // Vertex
 // *********************************************************************
+class PolyhedronFace;
 class PolyhedronVertex {
 public:
     PolyhedronVertex(QVector3D position = {0, 0, 0}) :
-        m_position(position)
+        m_position(position),
+        m_faces(),
+        m_normal(0, 0, 0),
+        m_normalComputed(false)
     {}
 
-    PolyhedronVertex(PolyhedronVertex const& vertex) :
-        m_position(vertex.m_position)
-    {}
-
+//    PolyhedronVertex(PolyhedronVertex const& vertex) :
+//        m_position(vertex.m_position),
+//        m_faces(),
+//        m_normal(0, 0, 0),
+//        m_normalComputed(false)
+//    {}
 
     QVector3D getPosition() const {return m_position;}
     void setPosition(QVector3D position) {m_position = position;}
 
+    void clearFaces() {m_faces.clear(); m_normalComputed = false;}
+    void removeFace(PolyhedronFace* face) {m_faces.removeOne(face); m_normalComputed = false;}
+    PolyhedronFace* getFace(int i) {assert(i >= 0 && i < m_faces.size()); return m_faces.at(i);}
+    void addFace(PolyhedronFace* face) {m_faces.append(face); m_normalComputed = false;}
+    void addFaces(QVector<PolyhedronFace*> face) {m_faces.append(face); m_normalComputed = false;}
+    int getFaceNbr() {return m_faces.size();}
+
+    QVector3D getNormal() {if(!m_normalComputed) computeNormal(); return m_normal; }
+
 private:
+    void computeNormal();
+
     QVector3D m_position;
+    QVector<PolyhedronFace*> m_faces;
+    QVector3D m_normal;
+    bool m_normalComputed;
 };
 
 
@@ -64,11 +84,13 @@ private:
 class PolyhedronFace {
 public:
     PolyhedronFace(QList<PolyhedronVertex*> vertices, QVector3D color = WHITE) :
-        m_vertices(vertices),
+        m_vertices(),
         m_color(color),
         m_normal(0, 0, 0),
         m_normalComputed(false)
-    {}
+    {
+        addVertices(vertices);
+    }
 
     PolyhedronFace(QVector3D color = WHITE) :
         m_vertices(),
@@ -77,12 +99,18 @@ public:
         m_normalComputed(false)
     {}
 
-    PolyhedronFace(PolyhedronFace const& face) :
-        m_vertices(face.m_vertices),
-        m_color(face.m_color),
-        m_normal(face.m_normal),
-        m_normalComputed(face.m_normalComputed)
-    {}
+//    PolyhedronFace(PolyhedronFace const& face) :
+//        m_vertices(),
+//        m_color(face.m_color),
+//        m_normal(face.m_normal),
+//        m_normalComputed(face.m_normalComputed)
+//    {
+//        addVertices(face.m_vertices);
+//    }
+
+    ~PolyhedronFace() {
+        removeAllVertices();
+    }
 
     QVector3D getNormal() {if (!m_normalComputed) computeNormal(); return m_normal;}
     QVector3D getColor() const {return m_color;}
@@ -90,14 +118,14 @@ public:
     int getVertexNbr() const {return m_vertices.size();}
 
     void setColor(QVector3D color) {m_color = color;}
-    void removeAllVertices() {m_vertices.clear(); m_normalComputed = false;}
-    void removeVertex(int id) {assert(id >= 0 && id < m_vertices.size()); m_vertices.removeAt(id); m_normalComputed = false;}
+    void removeAllVertices() {for (int i = 0; i < m_vertices.size(); i++) m_vertices.at(i)->removeFace(this); m_vertices.clear(); m_normalComputed = false;}
+    void removeVertex(int id) {assert(id >= 0 && id < m_vertices.size()); m_vertices.at(id)->removeFace(this); m_vertices.removeAt(id); m_normalComputed = false;}
     // Vertices storage should be managed by the user
     // Vertices are assumed to be ordered in counter clockwise order and on the same plan
     // The shape should be convex (for rendering purpose)
-    void setVertices(QList<PolyhedronVertex*> vertices) {m_vertices = vertices; m_normalComputed = false;}
-    void addVertices(QList<PolyhedronVertex*> vertices) {m_vertices.append(vertices); m_normalComputed = false;}
-    void addVertex(PolyhedronVertex* vertex) {m_vertices.append(vertex); m_normalComputed = false;}
+    void setVertices(QList<PolyhedronVertex*> vertices) {removeAllVertices(); addVertices(vertices); m_normalComputed = false;}
+    void addVertices(QList<PolyhedronVertex*> vertices) {for (int i = 0; i < vertices.size(); i++) addVertex(vertices.at(i)); m_normalComputed = false;}
+    void addVertex(PolyhedronVertex* vertex) {m_vertices.append(vertex); vertex->addFace(this); m_normalComputed = false;}
 
 private:
     // computed normal vector from the 3 first vertices
@@ -119,15 +147,16 @@ private:
 // *********************************************************************
 class Polyhedron : public QOpenGLFunctions {
 public:
-    Polyhedron(QList<PolyhedronVertex> vertices = {}) :
+    Polyhedron(bool smoothNormals, QList<PolyhedronVertex> vertices = {}) :
         m_vertices(),
         m_faces(),
         m_vertexBuffer(QOpenGLBuffer::VertexBuffer),
         m_indexBuffer(QOpenGLBuffer::IndexBuffer),
         m_indexNbr(0),
-        m_buffersComputed(false)
+        m_buffersComputed(false),
+        m_smoothNormals(smoothNormals)
     {
-        setVertices(vertices);
+        addVertices(vertices);
     }
 
     Polyhedron(Polyhedron const& polyhedron);
@@ -173,6 +202,7 @@ private:
 
     QList<PolyhedronVertex*> m_vertices;
     QList<PolyhedronFace*> m_faces;
+    bool m_smoothNormals;
 
     // vertex buffer objects (VBO)
     QOpenGLBuffer m_vertexBuffer, m_indexBuffer;

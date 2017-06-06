@@ -9,6 +9,7 @@ class Cube : public Polyhedron
 {
 public:
     Cube(QVector3D position = {0, 0, 0}, QVector3D dimension = {1, 1, 1}) :
+        Polyhedron(false),
         m_position(position),
         m_dimension(dimension),
         m_upToDate(false)
