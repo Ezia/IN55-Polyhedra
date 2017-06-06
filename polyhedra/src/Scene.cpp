@@ -27,14 +27,14 @@ void Scene::init()
     /************************************************/
 
     // small cube
-//    Cube* cube = new Cube;
-//    cube->setColor(GREEN);
-//    FaceShrinkingFilter* faceSkrinkingFilter = new FaceShrinkingFilter();
-//    faceSkrinkingFilter->setInput(cube);
-//    faceSkrinkingFilter->setFactor(0.5);
-//    faceSkrinkingFilter->update();
-//    Cube* filteredCube = (Cube*) faceSkrinkingFilter->getOutput();
-//    m_objects.append(filteredCube);
+    Cube* cube1 = new Cube;
+    cube1->setColor(GREEN);
+    FaceShrinkingFilter* cube1Filter = new FaceShrinkingFilter();
+    cube1Filter->setInput(cube1);
+    cube1Filter->setFactor(0.5);
+    cube1Filter->update();
+    Cube* filteredCube = (Cube*) cube1Filter->getOutput();
+    m_objects.append(filteredCube);
 
     // base surface
     Cube* cube2  = new Cube;
@@ -44,11 +44,11 @@ void Scene::init()
     m_objects.append(cube2);
 
     // another cube
-/*    Cube* cube3 = new Cube;
+    Cube* cube3 = new Cube;
     cube3->setPosition({-1.1, 0, 0});
     cube3->setDimension({1, 0.5, 0.5});
     cube3->setColor(YELLOW);
-    m_objects.append(cube3)*/;
+    m_objects.append(cube3);
 
     // a sphere
     Sphere* sphere1 = new Sphere;
@@ -57,20 +57,20 @@ void Scene::init()
     sphere1->setXYResolution(50);
     sphere1->setXZResolution(20);
     sphere1->setColor(GREEN);
-//    FaceShrinkingFilter* faceSkrinkingFilter = new FaceShrinkingFilter();
-//    faceSkrinkingFilter->setInput(sphere1);
-//    faceSkrinkingFilter->setFactor(0.5);
-//    faceSkrinkingFilter->update();
-//    Polyhedron* filteredSphere =  new Polyhedron(*faceSkrinkingFilter->getOutput());
-//    m_objects.append(filteredSphere);
-    m_objects.append(sphere1);
+    FaceShrinkingFilter* sphere1Filter = new FaceShrinkingFilter();
+    sphere1Filter->setInput(sphere1);
+    sphere1Filter->setFactor(0.5);
+    sphere1Filter->update();
+    Polyhedron* filteredSphere =  new Polyhedron(*sphere1Filter->getOutput());
+    m_objects.append(filteredSphere);
+//    m_objects.append(sphere1);
 
     // spot light
-    m_spotLight.setDirection({0, 0, -1});
-    m_spotLight.setUpDirection({0, 1, 0});
-    m_spotLight.setPosition({0, 0, 3});
-    m_spotLight.setHorizontalAngle(60);
-    m_spotLight.setVerticalAngle(40);
+    m_spotLight.setDirection({0, 1, -1});
+    m_spotLight.setUpDirection({0, 1, 1});
+    m_spotLight.setPosition({0, -3, 3});
+    m_spotLight.setHorizontalAngle(120);
+    m_spotLight.setVerticalAngle(120);
     m_spotLight.setPixelPerDegree(40);
     m_spotLight.setNearPlan(0.5);
     m_spotLight.setFarPlan(15);
