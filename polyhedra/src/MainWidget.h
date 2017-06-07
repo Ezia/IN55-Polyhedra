@@ -1,8 +1,6 @@
 #ifndef MAINWIDGET_H
 #define MAINWIDGET_H
 
-#include "Scene.h"
-
 // math
 #include <QMatrix4x4>
 #include <QQuaternion>
@@ -14,6 +12,9 @@
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
+
+#include "Scene.h"
+#include "Types.h"
 
 class MainWidget : public QOpenGLWidget
 {
@@ -29,20 +30,20 @@ protected:
     void timerEvent(QTimerEvent *e);
 
     void initializeGL();
-    void resizeGL(int w, int h);
+    void resizeGL(int32 w, int32 h);
     void paintGL();
 
 private:
     // motion and redering matrice
-    QBasicTimer timer;
-    QVector2D mousePressPosition;
-    QVector3D rotationAxis;
-    qreal angularSpeed;
-    QQuaternion rotation;
-    QMatrix4x4 projection;
+    QBasicTimer m_timer;
+    QVector2D m_mousePressPosition;
+    QVector3D m_rotationAxis;
+    qreal m_angularSpeed;
+    QQuaternion m_rotation;
+    QMatrix4x4 m_projection;
 
     // scene
-    Scene scene;
+    Scene m_scene;
 };
 
 #endif // MAINWIDGET_H

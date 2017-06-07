@@ -1,28 +1,23 @@
 #ifndef CUBE_H
 #define CUBE_H
 
-#include "Polyhedron.h"
-
 #include <QVector3D>
+
+#include "Polyhedron.h"
 
 class Cube : public Polyhedron
 {
 public:
-    Cube(QVector3D position = {0, 0, 0}, QVector3D dimension = {1, 1, 1}) :
-        Polyhedron(false),
-        m_position(position),
-        m_dimension(dimension),
-        m_upToDate(false)
-    {}
+    Cube(QVector3D position = {0, 0, 0}, QVector3D dimension = {1, 1, 1});
 
     // update the cube structure based on position and dimension fields
-    virtual void update();
+    virtual void updateGeometry();
 
-    QVector3D getPosition() const {return m_position;}
-    QVector3D getDimension() const {return m_dimension;}
+    QVector3D getPosition() const;
+    QVector3D getDimension() const;
 
-    void setPosition(QVector3D position) {m_position = position; m_upToDate = false;}
-    void setDimension(QVector3D dimension) {m_dimension = dimension; m_upToDate = false;}
+    void setPosition(QVector3D position);
+    void setDimension(QVector3D dimension);
 
 private:
      // center of the cube

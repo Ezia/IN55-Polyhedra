@@ -2,46 +2,40 @@
 #define SPHERE_H
 
 #include "Polyhedron.h"
+#include "Types.h"
 
 #include <QVector3D>
 
 class Sphere : public Polyhedron
 {
 public:
-    Sphere(QVector3D position = {0., 0., 0.}, float radius = 1., int xyResolution = 20, int xzResolution = 10) :
-        Polyhedron(true),
-        m_position(position),
-        m_radius(radius),
-        m_xyResolution(xyResolution),
-        m_xzResolution(xzResolution),
-        m_upToDate(false)
-    {}
+    Sphere(QVector3D position = {0., 0., 0.}, float32 radius = 1., int32 xyResolution = 20, int32 xzResolution = 10);
 
     // update the cube structure based on position and dimension fields
-    virtual void update();
+    virtual void updateGeometry();
 
-    QVector3D getPosition() const {return m_position;}
-    float getRadius() const {return m_radius;}
-    int getXYResolution() const {return m_xyResolution;}
-    int getXZResolution() const {return m_xzResolution;}
+    QVector3D getPosition() const;
+    float32 getRadius() const;
+    int32 getXYResolution() const;
+    int32 getXZResolution() const;
 
-    void setPosition(QVector3D position) {m_position = position ; m_upToDate = false;}
-    void setRadius(float radius) {m_radius = radius ; m_upToDate = false;}
-    void setXYResolution(int xyResolution) {m_xyResolution = xyResolution; m_upToDate = false;}
-    void setXZResolution(int xzResolution) {m_xzResolution = xzResolution; m_upToDate = false;}
+    void setPosition(QVector3D position);
+    void setRadius(float32 radius);
+    void setXYResolution(int32 xyResolution);
+    void setXZResolution(int32 xzResolution);
 
 private:
     // center of the sphere
     QVector3D m_position;
 
     // radius of the sphere
-    float m_radius;
+    float32 m_radius;
 
     // resolution of the sphere, on the XY plan
-    int m_xyResolution;
+    int32 m_xyResolution;
 
     // resolution of the sphere, on the XZ plan
-    int m_xzResolution;
+    int32 m_xzResolution;
 
     bool m_upToDate;
 };

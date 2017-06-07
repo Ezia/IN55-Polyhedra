@@ -6,24 +6,30 @@
 // math
 #include <math.h>
 
+/////////////////////////////// PUBLIC ///////////////////////////////////////
+
+//============================= LIFECYCLE ====================================
+
 MainWidget::MainWidget(QWidget *parent) :
     QOpenGLWidget(parent),
-    angularSpeed(0)
+    m_angularSpeed(0)
 {}
 
 MainWidget::~MainWidget()
 {}
 
+//============================= OPERATIONS ===================================
+
 void MainWidget::mousePressEvent(QMouseEvent *e)
 {
     // Save mouse press position
-    mousePressPosition = QVector2D(e->localPos());
+    m_mousePressPosition = QVector2D(e->localPos());
 }
 
 void MainWidget::mouseReleaseEvent(QMouseEvent *e)
 {
     // Mouse release position - mouse press position
-    QVector2D diff = QVector2D(e->localPos()) - mousePressPosition;
+    QVector2D diff = QVector2D(e->localPos()) - m_mousePressPosition;
 
     // Rotation axis is perpendicular to the mouse position difference
     // vector
@@ -33,23 +39,26 @@ void MainWidget::mouseReleaseEvent(QMouseEvent *e)
     qreal acc = diff.length() / 100.0;
 
     // Calculate new rotation axis as weighted sum
-    rotationAxis = (rotationAxis * angularSpeed + n * acc).normalized();
+    m_rotationAxis = (m_rotationAxis * m_angularSpeed + n * acc).normalized();
 
     // Increase angular speed
-    angularSpeed += acc;
+    m_angularSpeed += acc;
 }
 
 void MainWidget::timerEvent(QTimerEvent *)
 {
     // Decrease angular speed (friction)
-    angularSpeed *= 0.99;
+    m_angularSpeed *= 0.99;
 
     // Stop rotation when speed goes below threshold
-    if (angularSpeed < 0.01) {
-        angularSpeed = 0.0;
-    } else {
+    if (m_angularSpeed < 0.01)
+    {
+        m_angularSpeed = 0.0;
+    }
+    else
+    {
         // Update rotation
-        rotation = QQuaternion::fromAxisAndAngle(rotationAxis, angularSpeed) * rotation;
+        m_rotation = QQuaternion::fromAxisAndAngle(m_rotationAxis, m_angularSpeed) * m_rotation;
 
         // Update scene
         update();
@@ -58,39 +67,39 @@ void MainWidget::timerEvent(QTimerEvent *)
 
 void MainWidget::initializeGL()
 {
-    scene.init();
+    m_scene.init();
 
     // Use QBasicTimer because its faster than QTimer
-    timer.start(12, this);
+    m_timer.start(12, this);
 }
 
-void MainWidget::resizeGL(int w, int h)
+void MainWidget::resizeGL(int32 w, int32 h)
 {
     // Calculate aspect ratio
     qreal aspect = qreal(w) / qreal(h ? h : 1);
 
     // Set near plane to 3.0, far plane to 7.0, field of view 45 degrees
-    const qreal zNear = 1.0, zFar = 15.0, fov = 60.0;
+    const qreal z_near = 1.0, z_far = 15.0, fov = 60.0;
 
     // Reset projection
-    projection.setToIdentity();
+    m_projection.setToIdentity();
 
     // Set perspective projection
-    projection.perspective(fov, aspect, zNear, zFar);
+    m_projection.perspective(fov, aspect, z_near, z_far);
 
-    scene.setProjectionMatrix(projection);
-    scene.setViewPortDImension({(float)w, (float)h});
-    scene.setViewPortPosition({0, 0});
+    m_scene.setProjectionMatrix(m_projection);
+    m_scene.setViewPortDImension({(float32)w, (float32)h});
+    m_scene.setViewPortPosition({0, 0});
 }
 
 void MainWidget::paintGL()
 {
-    QMatrix4x4 viewMatrix;
-    viewMatrix.setToIdentity();
-    viewMatrix.translate(0, 0, -8);
-    viewMatrix.rotate(rotation);
+    QMatrix4x4 view_matrix;
+    view_matrix.setToIdentity();
+    view_matrix.translate(0, 0, -8);
+    view_matrix.rotate(m_rotation);
 
-    scene.setViewMatrix(viewMatrix);
+    m_scene.setViewMatrix(view_matrix);
 
     // *************************************************************
     // Uncomment to render the scene with basic shaders
@@ -102,5 +111,5 @@ void MainWidget::paintGL()
     // Uncomment to render the scene with light and shadow
     // *************************************************************
 
-    scene.drawRender();
+    m_scene.drawRender();
 }

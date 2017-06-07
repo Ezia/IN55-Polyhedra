@@ -1,8 +1,76 @@
 #include "Scene.h"
 
+#include <QOpenGLFramebufferObject>
+#include <QOpenGLShaderProgram>
+
 #include "Cube.h"
 #include "Sphere.h"
 #include "FaceShrinkingFilter.h"
+
+/////////////////////////////// PUBLIC ///////////////////////////////////////
+
+//============================= LIFECYCLE ====================================
+
+Scene::Scene() :
+    m_objects(),
+    m_spotLight(),
+    m_shadowTextureComputed(false),
+    m_viewMatrix(),
+    m_projectionMatrix(),
+    m_viewPortPosition(),
+    m_viewPortDimension()
+{}
+
+Scene::~Scene() {
+    for (int32 i = 0; i < m_objects.size(); i++)
+    {
+        delete m_objects[i];
+    }
+}
+
+//============================= ATTRIBUTE ACCESSORS ==========================
+
+QMatrix4x4 Scene::getViewMatrix() const
+{
+    return m_viewMatrix;
+}
+
+QMatrix4x4 Scene::getProjectionMatrix() const
+{
+    return m_viewMatrix;
+}
+
+QVector2D Scene::getViewPortDimension() const
+{
+    return m_viewPortDimension;
+}
+
+QVector2D Scene::getViewPortPosition() const
+{
+    return m_viewPortPosition;
+}
+
+void Scene::setViewMatrix(QMatrix4x4 viewMatrix)
+{
+    m_viewMatrix = viewMatrix;
+}
+
+void Scene::setProjectionMatrix(QMatrix4x4 projectionMatrix)
+{
+    m_projectionMatrix = projectionMatrix;
+}
+
+void Scene::setViewPortPosition(QVector2D viewPortPosition)
+{
+    m_viewPortPosition = viewPortPosition;
+}
+
+void Scene::setViewPortDImension(QVector2D viewPortDimension)
+{
+    m_viewPortDimension = viewPortDimension;
+}
+
+//============================= OPERATIONS ===================================
 
 
 void Scene::init()
@@ -28,7 +96,7 @@ void Scene::init()
 
     // small cube
     Cube* cube1 = new Cube;
-    cube1->setColor(GREEN);
+    cube1->setGeometryColor(GREEN);
     FaceShrinkingFilter* cube1Filter = new FaceShrinkingFilter();
     cube1Filter->setInput(cube1);
     cube1Filter->setFactor(0.5);
@@ -40,14 +108,14 @@ void Scene::init()
     Cube* cube2  = new Cube;
     cube2->setPosition({0, 0, -1});
     cube2->setDimension({10, 10, 0.5});
-    cube2->setColor(BLUE);
+    cube2->setGeometryColor(BLUE);
     m_objects.append(cube2);
 
     // another cube
     Cube* cube3 = new Cube;
     cube3->setPosition({-1.1, 0, 0});
     cube3->setDimension({1, 0.5, 0.5});
-    cube3->setColor(YELLOW);
+    cube3->setGeometryColor(YELLOW);
     m_objects.append(cube3);
 
     // a sphere
@@ -56,7 +124,7 @@ void Scene::init()
     sphere1->setRadius(1.);
     sphere1->setXYResolution(50);
     sphere1->setXZResolution(20);
-    sphere1->setColor(GREEN);
+    sphere1->setGeometryColor(GREEN);
     FaceShrinkingFilter* sphere1Filter = new FaceShrinkingFilter();
     sphere1Filter->setInput(sphere1);
     sphere1Filter->setFactor(0.5);
@@ -111,7 +179,8 @@ void Scene::drawRender()
     m_renderProgram.setUniformValue("spotLightMVP", m_spotLight.getProjection());
     m_renderProgram.setUniformValue("shadowBias", m_spotLight.getShadowTextureBias());
 
-    for (int i = 0; i < m_objects.size(); i++) {
+    for (int32 i = 0; i < m_objects.size(); i++)
+    {
         m_objects[i]->drawRender(&m_renderProgram);
     }
 
@@ -120,7 +189,8 @@ void Scene::drawRender()
 
 void Scene::drawShadow()
 {
-    if (!m_shadowTextureComputed) {
+    if (!m_shadowTextureComputed)
+    {
         m_shadowProgram.bind();
 
         m_shadowProgram.setUniformValue("spotLightMVP", m_spotLight.getProjection());
@@ -136,7 +206,8 @@ void Scene::drawShadow()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-        for (int i = 0; i < m_objects.size(); i++) {
+        for (int32 i = 0; i < m_objects.size(); i++)
+        {
             m_objects[i]->drawShadow(&m_shadowProgram);
         }
 
@@ -162,9 +233,12 @@ void Scene::drawBasic()
 
     m_basicProgram.setUniformValue("MVP", m_projectionMatrix * m_viewMatrix);
 
-    for (int i = 0; i < m_objects.size(); i++) {
+    for (int32 i = 0; i < m_objects.size(); i++)
+    {
         m_objects[i]->drawBasic(&m_basicProgram);
     }
 
     m_basicProgram.release();
 }
+
+

@@ -1,19 +1,18 @@
 #ifndef POLYHEDRONFILTER_H
 #define POLYHEDRONFILTER_H
 
-#include "Polyhedron.h"
+class Polyhedron;
 
 class PolyhedronFilter
 {
-
 public:
-    virtual void setInput(Polyhedron* input) = 0;
+    void setInput(Polyhedron* m_input);
     virtual void update() = 0;
-    virtual Polyhedron* getOutput() = 0;
+    Polyhedron* getOutput();
 
 protected:
-    Polyhedron* input;
-    Polyhedron* output;
+    Polyhedron* m_input;
+    Polyhedron* m_output;
 };
 
 #endif // POLYHEDRONFILTER_H

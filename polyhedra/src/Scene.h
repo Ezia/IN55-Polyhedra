@@ -6,22 +6,14 @@
 #include <QOpenGLShaderProgram>
 
 #include "SpotLight.h"
+#include "Types.h"
 
 class Scene : public QOpenGLFunctions
 {
 public:
-    Scene() :
-        m_objects(),
-        m_spotLight(),
-        m_shadowTextureComputed(false),
-        m_viewMatrix(),
-        m_projectionMatrix(),
-        m_viewPortPosition(),
-        m_viewPortDimension()
-    {
-    }
+    Scene();
 
-    ~Scene() {for (int i = 0; i < m_objects.size(); i++) delete m_objects[i];}
+    ~Scene();
 
     // Scene building
     // Objects and light are hard coded here for easy testing
@@ -35,15 +27,15 @@ public:
 
     void drawBasic();
 
-    QMatrix4x4 getViewMatrix() const {return m_viewMatrix;}
-    QMatrix4x4 getProjectionMatrix() const {return m_viewMatrix;}
-    QVector2D getViewPortDimension() const {return m_viewPortDimension;}
-    QVector2D getViewPortPosition() const {return m_viewPortPosition;}
+    QMatrix4x4 getViewMatrix() const;
+    QMatrix4x4 getProjectionMatrix() const;
+    QVector2D getViewPortDimension() const;
+    QVector2D getViewPortPosition() const;
 
-    void setViewMatrix(QMatrix4x4 viewMatrix) {m_viewMatrix = viewMatrix;}
-    void setProjectionMatrix(QMatrix4x4 projectionMatrix) {m_projectionMatrix = projectionMatrix;}
-    void setViewPortPosition(QVector2D viewPortPosition) {m_viewPortPosition = viewPortPosition;}
-    void setViewPortDImension(QVector2D viewPortDimension) {m_viewPortDimension = viewPortDimension;}
+    void setViewMatrix(QMatrix4x4 viewMatrix);
+    void setProjectionMatrix(QMatrix4x4 projectionMatrix);
+    void setViewPortPosition(QVector2D viewPortPosition);
+    void setViewPortDImension(QVector2D viewPortDimension);
 
 private:
 
@@ -54,10 +46,14 @@ private:
     SpotLight m_spotLight;
     bool m_shadowTextureComputed;
 
-    QMatrix4x4 m_viewMatrix, m_projectionMatrix;
-    QVector2D m_viewPortPosition, m_viewPortDimension;
+    QMatrix4x4 m_viewMatrix;
+    QMatrix4x4 m_projectionMatrix;
+    QVector2D m_viewPortPosition;
+    QVector2D m_viewPortDimension;
 
-    QOpenGLShaderProgram m_renderProgram, m_shadowProgram, m_basicProgram;
+    QOpenGLShaderProgram m_renderProgram;
+    QOpenGLShaderProgram m_shadowProgram;
+    QOpenGLShaderProgram m_basicProgram;
 };
 
 #endif // SCENE_H

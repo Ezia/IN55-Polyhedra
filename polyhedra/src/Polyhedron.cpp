@@ -8,15 +8,21 @@ struct VertexData {
     QVector3D normal;
 };
 
-void PolyhedronFace::computeNormal()
-{
-    assert(m_vertices.size() >= 3);
-    QVector3D v1 = m_vertices[1]->getPosition() - m_vertices[0]->getPosition();
-    QVector3D v2 = m_vertices[2]->getPosition() - m_vertices[1]->getPosition();
-    m_normal = QVector3D::crossProduct(v1, v2).normalized();
-    m_normalComputed = true;
-}
+/////////////////////////////// PUBLIC ///////////////////////////////////////
 
+//============================= LIFECYCLE ====================================
+
+Polyhedron::Polyhedron(bool smoothNormals, QList<PolyhedronVertex> vertices) :
+    m_vertices(),
+    m_faces(),
+    m_vertexBuffer(QOpenGLBuffer::VertexBuffer),
+    m_indexBuffer(QOpenGLBuffer::IndexBuffer),
+    m_indexNbr(0),
+    m_buffersComputed(false),
+    m_smoothNormals(smoothNormals)
+{
+    addVertices(vertices);
+}
 
 Polyhedron::Polyhedron(Polyhedron const& polyhedron) :
     QOpenGLFunctions(),
@@ -28,19 +34,29 @@ Polyhedron::Polyhedron(Polyhedron const& polyhedron) :
     m_buffersComputed(false),
     m_smoothNormals(polyhedron.m_smoothNormals)
 {
-    for (int i = 0; i < polyhedron.m_vertices.size(); i++) {
+    for (int32 i = 0; i < polyhedron.m_vertices.size(); i++)
+    {
         m_vertices.append(new PolyhedronVertex(*polyhedron.m_vertices[i]));
     }
 
-    for (int i = 0; i < polyhedron.m_faces.size(); i++) {
+    for (int32 i = 0; i < polyhedron.m_faces.size(); i++)
+    {
         PolyhedronFace* face = polyhedron.m_faces[i];
-        QList<PolyhedronVertex*> faceVertices;
-        for (int j = 0; j < face->getVertexNbr(); j++) {
-            faceVertices.append(m_vertices[polyhedron.m_vertices.indexOf(face->getVertex(j))]);
+        QList<PolyhedronVertex*> face_vertices;
+        for (int32 j = 0; j < face->getVertexNbr(); j++)
+        {
+            face_vertices.append(m_vertices[polyhedron.m_vertices.indexOf(face->getVertex(j))]);
         }
-        m_faces.append(new PolyhedronFace(faceVertices, face->getColor()));
+        m_faces.append(new PolyhedronFace(face_vertices, face->getColor()));
     }
 }
+
+Polyhedron::~Polyhedron()
+{
+    removeAll();
+}
+
+//============================= OPERATORS ====================================
 
 Polyhedron &Polyhedron::operator=(const Polyhedron &polyhedron)
 {
@@ -48,17 +64,20 @@ Polyhedron &Polyhedron::operator=(const Polyhedron &polyhedron)
 
     m_smoothNormals = polyhedron.m_smoothNormals;
 
-    for (int i = 0; i < polyhedron.m_vertices.size(); i++) {
+    for (int32 i = 0; i < polyhedron.m_vertices.size(); i++)
+    {
         m_vertices.append(new PolyhedronVertex(*polyhedron.m_vertices[i]));
     }
 
-    for (int i = 0; i < polyhedron.m_faces.size(); i++) {
+    for (int32 i = 0; i < polyhedron.m_faces.size(); i++)
+    {
         PolyhedronFace* face = polyhedron.m_faces[i];
-        QList<PolyhedronVertex*> faceVertices;
-        for (int j = 0; j < face->getVertexNbr(); j++) {
-            faceVertices.append(m_vertices[polyhedron.m_vertices.indexOf(face->getVertex(j))]);
+        QList<PolyhedronVertex*> face_vertices;
+        for (int32 j = 0; j < face->getVertexNbr(); j++)
+        {
+            face_vertices.append(m_vertices[polyhedron.m_vertices.indexOf(face->getVertex(j))]);
         }
-        m_faces.append(new PolyhedronFace(faceVertices, face->getColor()));
+        m_faces.append(new PolyhedronFace(face_vertices, face->getColor()));
     }
 
     m_buffersComputed = false;
@@ -66,16 +85,105 @@ Polyhedron &Polyhedron::operator=(const Polyhedron &polyhedron)
     return *this;
 }
 
-void Polyhedron::addFace(QList<int> indices, QVector3D color)
+//============================= ATTRIBUTE ACCESSORS ==========================
+
+int32 Polyhedron::getVertexNbr() const
 {
-    PolyhedronFace* newFace = new PolyhedronFace(color);
-    for (int i = 0; i < indices.size(); i++) {
-        newFace->addVertex(getVertex(indices[i]));
+    return m_vertices.size();
+}
+
+int32 Polyhedron::getFaceNbr() const
+{
+    return m_faces.size();
+}
+
+PolyhedronFace *Polyhedron::getFace(int32 id) const
+{
+    assert(id >= 0 && id < m_faces.size());
+    return m_faces[id];
+}
+
+PolyhedronVertex *Polyhedron::getVertex(int32 id) const
+{
+    assert(id >= 0 && id < m_vertices.size());
+    return m_vertices[id];
+}
+
+void Polyhedron::addFace(QList<int32> indices, QVector3D color)
+{
+    PolyhedronFace* new_face = new PolyhedronFace(color);
+    for (int32 i = 0; i < indices.size(); i++)
+    {
+        new_face->addVertex(getVertex(indices[i]));
     }
-    m_faces.append(newFace);
+    m_faces.append(new_face);
 
     m_buffersComputed = false;
 }
+
+
+
+void Polyhedron::removeAll()
+{
+    removeAllFaces();
+    for (int32 i = 0; i < m_vertices.size(); i++)
+    {
+        delete m_vertices[i];
+        m_vertices.removeAt(i);
+        m_buffersComputed = false;
+    }
+}
+
+void Polyhedron::removeAllFaces()
+{
+    for (int32 i = 0; i < m_faces.size(); i++)
+    {
+        removeFace(i);
+    }
+}
+
+void Polyhedron::removeFace(int32 id)
+{
+    assert(id >= 0 && id < m_faces.size());
+    delete m_faces[id];
+    m_faces.removeAt(id);
+    m_buffersComputed = false;
+}
+
+void Polyhedron::setVertices(QList<PolyhedronVertex> vertices)
+{
+    removeAll();
+    addVertices(vertices);
+}
+
+void Polyhedron::addVertex(PolyhedronVertex vertex)
+{
+    m_vertices.push_back(new PolyhedronVertex(vertex));
+    m_buffersComputed = false;
+}
+
+void Polyhedron::addVertices(QList<PolyhedronVertex> vertices)
+{
+    for (int32 i = 0; i < vertices.size(); i++)
+    {
+        addVertex(vertices[i]);
+    }
+}
+
+//============================= OPERATIONS ===================================
+
+void Polyhedron::setGeometryColor(QVector3D color)
+{
+    updateGeometry();
+    for (int32 i = 0; i < m_faces.size(); i++)
+    {
+        m_faces[i]->setColor(color);
+    }
+    m_buffersComputed = false;
+}
+
+void Polyhedron::updateGeometry()
+{}
 
 void Polyhedron::drawRender(QOpenGLShaderProgram *program)
 {
@@ -85,27 +193,27 @@ void Polyhedron::drawRender(QOpenGLShaderProgram *program)
     m_vertexBuffer.bind();
 
     // Offset for position
-    int offset = 0;
+    int32 offset = 0;
     // Space between positions
-    int stride = sizeof(VertexData);
+    int32 stride = sizeof(VertexData);
 
-    int vertexPositionLoc = program->attributeLocation("a_position");
+    int32 vertexPositionLoc = program->attributeLocation("a_position");
     program->enableAttributeArray(vertexPositionLoc);
     program->setAttributeBuffer(vertexPositionLoc, GL_FLOAT, offset, 3, stride);
 
     offset += sizeof(QVector3D);
 
-    int vertexColorLoc = program->attributeLocation("a_color");
+    int32 vertexColorLoc = program->attributeLocation("a_color");
     program->enableAttributeArray(vertexColorLoc);
     program->setAttributeBuffer(vertexColorLoc, GL_FLOAT, offset, 3, stride);
 
     offset += sizeof(QVector3D);
 
-    int vertexNormalLoc = program->attributeLocation("a_normal");
+    int32 vertexNormalLoc = program->attributeLocation("a_normal");
     program->enableAttributeArray(vertexNormalLoc);
     program->setAttributeBuffer(vertexNormalLoc, GL_FLOAT, offset, 3, stride);
 
-    glDrawElements(GL_TRIANGLE_STRIP, m_indexNbr, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_TRIANGLE_STRIP, m_indexNbr, GL_UNSIGNED_INT, 0);
 
     m_indexBuffer.release();
     m_vertexBuffer.release();
@@ -119,15 +227,15 @@ void Polyhedron::drawShadow(QOpenGLShaderProgram *program)
     m_vertexBuffer.bind();
 
     // Offset for position
-    int offset = 0;
+    int32 offset = 0;
     // Space between positions
-    int stride = sizeof(VertexData);
+    int32 stride = sizeof(VertexData);
 
-    int vertexPositionLoc = program->attributeLocation("in_position");
+    int32 vertexPositionLoc = program->attributeLocation("in_position");
     program->enableAttributeArray(vertexPositionLoc);
     program->setAttributeBuffer(vertexPositionLoc, GL_FLOAT, offset, 3, stride);
 
-    glDrawElements(GL_TRIANGLE_STRIP, m_indexNbr, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_TRIANGLE_STRIP, m_indexNbr, GL_UNSIGNED_INT, 0);
 
     m_indexBuffer.release();
     m_vertexBuffer.release();
@@ -141,34 +249,41 @@ void Polyhedron::drawBasic(QOpenGLShaderProgram *program)
     m_vertexBuffer.bind();
 
     // Offset for position
-    int offset = 0;
+    int32 offset = 0;
     // Space between positions
-    int stride = sizeof(VertexData);
+    int32 stride = sizeof(VertexData);
 
-    int vertexPositionLoc = program->attributeLocation("position");
+    int32 vertexPositionLoc = program->attributeLocation("position");
     program->enableAttributeArray(vertexPositionLoc);
     program->setAttributeBuffer(vertexPositionLoc, GL_FLOAT, offset, 3, stride);
 
     offset += sizeof(QVector3D);
 
-    int vertexColorLoc = program->attributeLocation("in_color");
+    int32 vertexColorLoc = program->attributeLocation("in_color");
     program->enableAttributeArray(vertexColorLoc);
     program->setAttributeBuffer(vertexColorLoc, GL_FLOAT, offset, 3, stride);
 
-    glDrawElements(GL_TRIANGLE_STRIP, m_indexNbr, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_TRIANGLE_STRIP, m_indexNbr, GL_UNSIGNED_INT, 0);
 
     m_indexBuffer.release();
     m_vertexBuffer.release();
 }
 
+/////////////////////////////// PRIVATE    ///////////////////////////////////
+
+//============================= OPERATIONS ===================================
+
 void Polyhedron::updateBuffers()
 {
-    if (!m_buffersComputed) {
-        if (!m_indexBuffer.isCreated()) {
+    if (!m_buffersComputed)
+    {
+        if (!m_indexBuffer.isCreated())
+        {
             m_indexBuffer.create();
         }
 
-        if (!m_vertexBuffer.isCreated()) {
+        if (!m_vertexBuffer.isCreated())
+        {
             m_vertexBuffer.create();
         }
 
@@ -181,46 +296,56 @@ void Polyhedron::updateBuffers()
         // index of the first strip needs to be duplicated.
 
         QLinkedList<VertexData> vertices;
-        QLinkedList<GLushort> indices;
-        int currVertexId = 0;
+        QLinkedList<uint> indices;
+        int32 curr_vertex_id = 0;
 
-        bool doubleFirstIndex = false;
+        bool double_first_index = false;
 
         // loop through faces
-        for (int i = 0; i < m_faces.size(); i++) {
+        for (int32 i = 0; i < m_faces.size(); i++)
+        {
             PolyhedronFace* face = m_faces[i];
 
             // Add vertices to list
-            for ( int j = 0; j < face->getVertexNbr(); j++) {
+            for ( int32 j = 0; j < face->getVertexNbr(); j++)
+            {
                 PolyhedronVertex* vertex = face->getVertex(j);
-                if (m_smoothNormals) {
+                if (m_smoothNormals)
+                {
                     vertices.push_back({vertex->getPosition(), face->getColor(), vertex->getNormal()});
-                } else {
+                }
+                else
+                {
                     vertices.push_back({vertex->getPosition(), face->getColor(), face->getNormal()});
                 }
             }
 
             // Add indices to list
 
-//            if (doubleFirstIndex){
-                indices.push_back(currVertexId);
+//            if (doubleFirstIndex)
+//            {
+                indices.push_back(curr_vertex_id);
 //            }
-            indices.push_back(currVertexId);
+            indices.push_back(curr_vertex_id);
 
-            int incrIndexValue = 1;
-            int indexAddedNbr = 1;
-            while (indexAddedNbr < face->getVertexNbr()) {
-                if (indexAddedNbr%2 == 0) {
-                    indices.push_back(currVertexId+face->getVertexNbr()-incrIndexValue);
-                    incrIndexValue++;
-                } else {
-                    indices.push_back(currVertexId+incrIndexValue);
+            int32 incr_index_value = 1;
+            int32 index_added_nbr = 1;
+            while (index_added_nbr < face->getVertexNbr())
+            {
+                if (index_added_nbr%2 == 0)
+                {
+                    indices.push_back(curr_vertex_id+face->getVertexNbr()-incr_index_value);
+                    incr_index_value++;
+                }
+                else
+                {
+                    indices.push_back(curr_vertex_id+incr_index_value);
                 }
 //                doubleFirstIndex = !doubleFirstIndex;
-                indexAddedNbr++;
+                index_added_nbr++;
             }
 
-            currVertexId += face->getVertexNbr();
+            curr_vertex_id += face->getVertexNbr();
 
             // double last index
             indices.push_back(indices.last());
@@ -234,27 +359,29 @@ void Polyhedron::updateBuffers()
 
         // Transfer to arrays
 
-        VertexData tabVertices[vertices.size()];
-        GLushort tabIndices[indices.size()];
+        VertexData tab_vertices[vertices.size()];
+        int32 tab_indices[indices.size()];
 
-        int i = 0;
-        for (QLinkedList<VertexData>::Iterator it = vertices.begin(); it != vertices.end(); it++) {
-            tabVertices[i++] = (*it);
+        int32 i = 0;
+        for (QLinkedList<VertexData>::Iterator it = vertices.begin(); it != vertices.end(); it++)
+        {
+            tab_vertices[i++] = (*it);
         }
         i = 0;
-        for (QLinkedList<GLushort>::Iterator it = indices.begin(); it != indices.end(); it++) {
-            tabIndices[i++] = (*it);
+        for (QLinkedList<uint>::Iterator it = indices.begin(); it != indices.end(); it++)
+        {
+            tab_indices[i++] = (*it);
         }
 
         // Transfer vertices to buffer
         m_vertexBuffer.bind();
-        m_vertexBuffer.allocate(tabVertices, vertices.size() * sizeof(VertexData));
+        m_vertexBuffer.allocate(tab_vertices, vertices.size() * sizeof(VertexData));
         m_vertexBuffer.release();
 
 
         // Transfer indices to buffer
         m_indexBuffer.bind();
-        m_indexBuffer.allocate(tabIndices, indices.size() * sizeof(GLushort));
+        m_indexBuffer.allocate(tab_indices, indices.size() * sizeof(uint));
         m_indexBuffer.release();
 
         m_indexNbr = indices.size();
@@ -263,15 +390,8 @@ void Polyhedron::updateBuffers()
     }
 }
 
-void PolyhedronVertex::computeNormal()
-{
-    assert(m_faces.size() > 0);
-    m_normal[0] = 0;
-    m_normal[1] = 0;
-    m_normal[2] = 0;
-    for (int i = 0; i < m_faces.size(); i++) {
-        m_normal += m_faces.at(i)->getNormal();
-    }
-    m_normal.normalize();
-    m_normalComputed = true;
+void Polyhedron::updateRendering() {
+    initializeOpenGLFunctions();
+    updateGeometry();
+    updateBuffers();
 }

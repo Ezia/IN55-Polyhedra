@@ -1,25 +1,23 @@
 #ifndef FACESHRINKINGFILTER_H
 #define FACESHRINKINGFILTER_H
 
-#include "Polyhedron.h"
 #include "PolyhedronFilter.h"
+#include "Types.h"
 
 class FaceShrinkingFilter : public PolyhedronFilter
 {
-
 public:
     FaceShrinkingFilter();
     ~FaceShrinkingFilter();
 
-    void setInput(Polyhedron* input);
-    void update();
-    Polyhedron* getOutput();
+    virtual void update();
 
     // between 1 and 0, 1 leaving faces as they are
-    void setFactor(double factor);
+    void setFactor(float32 factor);
+    float32 factor() const;
 
 private:
-    double factor;
+    float32 m_factor;
 };
 
 #endif // FACESHRINKINGFILTER_H

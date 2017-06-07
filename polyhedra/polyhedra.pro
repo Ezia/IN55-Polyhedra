@@ -18,7 +18,10 @@ SOURCES += \
     src/MainWidget.cpp \
     src/Main.cpp \
     src/FaceShrinkingFilter.cpp \
-    src/Sphere.cpp
+    src/Sphere.cpp \
+    src/PolyhedronVertex.cpp \
+    src/PolyhedronFace.cpp \
+    src/PolyhedronFilter.cpp
 
     HEADERS += \
     src/Cube.h \
@@ -28,7 +31,11 @@ SOURCES += \
     src/MainWidget.h \
     src/PolyhedronFilter.h \
     src/FaceShrinkingFilter.h \
-    src/Sphere.h
+    src/Sphere.h \
+    src/Types.h \
+    src/PolyhedronVertex.h \
+    src/PolyhedronFace.h \
+    src/Colors.h
 
     RESOURCES += \
         shaders.qrc
