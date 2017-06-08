@@ -44,6 +44,9 @@ private:
 
     // scene
     Scene m_scene;
+
+private slots:
+    void cursorMoved(int value);
 };
 
 #endif // MAINWIDGET_H

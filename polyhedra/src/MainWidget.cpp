@@ -113,3 +113,8 @@ void MainWidget::paintGL()
 
     m_scene.drawRender();
 }
+
+void MainWidget::cursorMoved(int value)
+{
+    // TODO
+}
