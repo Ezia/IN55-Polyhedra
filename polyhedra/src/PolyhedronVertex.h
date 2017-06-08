@@ -12,6 +12,7 @@ class PolyhedronVertex
 {
 public:
     PolyhedronVertex(QVector3D position = {0, 0, 0});
+    PolyhedronVertex(const PolyhedronVertex& vertex);
 
     QVector3D getPosition() const;
     void setPosition(QVector3D position);

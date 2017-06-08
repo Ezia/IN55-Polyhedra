@@ -7,6 +7,7 @@
 
 #include "SpotLight.h"
 #include "Types.h"
+#include "FaceShrinkingFilter.h"
 
 class Scene : public QOpenGLFunctions
 {
@@ -32,15 +33,23 @@ public:
     QVector2D getViewPortDimension() const;
     QVector2D getViewPortPosition() const;
 
+    QList<Polyhedron*> getObjectList() const;
+    QList<FaceShrinkingFilter*> getFilterList() const;
+    SpotLight* getSpotLight();
+
     void setViewMatrix(QMatrix4x4 viewMatrix);
     void setProjectionMatrix(QMatrix4x4 projectionMatrix);
     void setViewPortPosition(QVector2D viewPortPosition);
     void setViewPortDImension(QVector2D viewPortDimension);
+    void notifyShadowMapNeedsComputation();
 
 private:
 
     // objects in the scene
     QList<Polyhedron*> m_objects;
+
+    // filters in the scene
+    QList<FaceShrinkingFilter*> m_filters;
 
     // spot light of the scene
     SpotLight m_spotLight;

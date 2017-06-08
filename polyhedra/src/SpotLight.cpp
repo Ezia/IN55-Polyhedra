@@ -180,9 +180,6 @@ void SpotLight::setShadowTextureBias(float32 shadowTextureBias)
 
 //============================= OPERATIONS ===================================
 
-
-
-
 void SpotLight::updateShadowTexture()
 {
     if (!m_shadowTextureUpToDate)

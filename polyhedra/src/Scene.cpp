@@ -5,7 +5,6 @@
 
 #include "Cube.h"
 #include "Sphere.h"
-#include "FaceShrinkingFilter.h"
 
 /////////////////////////////// PUBLIC ///////////////////////////////////////
 
@@ -25,6 +24,12 @@ Scene::~Scene() {
     for (int32 i = 0; i < m_objects.size(); i++)
     {
         delete m_objects[i];
+    }
+
+    foreach (FaceShrinkingFilter* filter, m_filters)
+    {
+        delete filter->getInput();
+        delete filter;
     }
 }
 
@@ -70,6 +75,11 @@ void Scene::setViewPortDImension(QVector2D viewPortDimension)
     m_viewPortDimension = viewPortDimension;
 }
 
+void Scene::notifyShadowMapNeedsComputation()
+{
+    m_shadowTextureComputed = false;
+}
+
 //============================= OPERATIONS ===================================
 
 
@@ -96,13 +106,15 @@ void Scene::init()
 
     // small cube
     Cube* cube1 = new Cube;
-    cube1->setGeometryColor(GREEN);
+    cube1->setPosition({2.5, 0, 0.5});
+    cube1->setDimension({2, 2, 2});
+    cube1->setGeometryColor(PURPLE);
     FaceShrinkingFilter* cube1Filter = new FaceShrinkingFilter();
     cube1Filter->setInput(cube1);
     cube1Filter->setFactor(0.5);
     cube1Filter->update();
-    Cube* filteredCube = (Cube*) cube1Filter->getOutput();
-    m_objects.append(filteredCube);
+//    Cube* filteredCube1 = (Cube*) cube1Filter->getOutput();
+    m_filters.append(cube1Filter);
 
     // base surface
     Cube* cube2  = new Cube;
@@ -113,14 +125,18 @@ void Scene::init()
 
     // another cube
     Cube* cube3 = new Cube;
-    cube3->setPosition({-1.1, 0, 0});
-    cube3->setDimension({1, 0.5, 0.5});
+    cube3->setPosition({-2.5, 0, 0});
+    cube3->setDimension({2, 1, 1});
     cube3->setGeometryColor(YELLOW);
-    m_objects.append(cube3);
+    FaceShrinkingFilter* cube3Filter = new FaceShrinkingFilter();
+    cube3Filter->setInput(cube3);
+    cube3Filter->setFactor(0.5);
+    cube3Filter->update();
+    m_filters.append(cube3Filter);
 
     // a sphere
     Sphere* sphere1 = new Sphere;
-    sphere1->setPosition({0, 0, 0.});
+    sphere1->setPosition({0, 0, 0.5});
     sphere1->setRadius(1.);
     sphere1->setXYResolution(50);
     sphere1->setXZResolution(20);
@@ -129,14 +145,12 @@ void Scene::init()
     sphere1Filter->setInput(sphere1);
     sphere1Filter->setFactor(0.5);
     sphere1Filter->update();
-    Polyhedron* filteredSphere =  new Polyhedron(*sphere1Filter->getOutput());
-    m_objects.append(filteredSphere);
-//    m_objects.append(sphere1);
+    m_filters.append(sphere1Filter);
 
     // spot light
-    m_spotLight.setDirection({0, 1, -1});
-    m_spotLight.setUpDirection({0, 1, 1});
-    m_spotLight.setPosition({0, -3, 3});
+    m_spotLight.setDirection({0, 0, -1});
+    m_spotLight.setUpDirection({0, 1, 0});
+    m_spotLight.setPosition({0, 0, 5});
     m_spotLight.setHorizontalAngle(120);
     m_spotLight.setVerticalAngle(120);
     m_spotLight.setPixelPerDegree(40);
@@ -184,6 +198,11 @@ void Scene::drawRender()
         m_objects[i]->drawRender(&m_renderProgram);
     }
 
+    foreach (FaceShrinkingFilter* filter, m_filters)
+    {
+        filter->getOutput()->drawRender(&m_renderProgram);
+    }
+
     m_renderProgram.release();
 }
 
@@ -209,6 +228,11 @@ void Scene::drawShadow()
         for (int32 i = 0; i < m_objects.size(); i++)
         {
             m_objects[i]->drawShadow(&m_shadowProgram);
+        }
+
+        foreach (FaceShrinkingFilter* filter, m_filters)
+        {
+            filter->getOutput()->drawShadow(&m_shadowProgram);
         }
 
         m_spotLight.getShadowTexture()->release();
@@ -238,7 +262,27 @@ void Scene::drawBasic()
         m_objects[i]->drawBasic(&m_basicProgram);
     }
 
+    foreach (FaceShrinkingFilter* filter, m_filters)
+    {
+        filter->getOutput()->drawBasic(&m_basicProgram);
+    }
+
     m_basicProgram.release();
+}
+
+QList<Polyhedron*> Scene::getObjectList() const
+{
+    return this->m_objects;
+}
+
+QList<FaceShrinkingFilter*> Scene::getFilterList() const
+{
+    return this->m_filters;
+}
+
+SpotLight* Scene::getSpotLight()
+{
+    return &(this->m_spotLight);
 }
 
 

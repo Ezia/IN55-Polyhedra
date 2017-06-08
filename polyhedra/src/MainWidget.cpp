@@ -1,7 +1,10 @@
 #include "MainWidget.h"
+#include "FaceShrinkingFilter.h"
 
 // motion
 #include <QMouseEvent>
+#include <QQuaternion>
+#include <QVector3D>
 
 // math
 #include <math.h>
@@ -114,7 +117,37 @@ void MainWidget::paintGL()
     m_scene.drawRender();
 }
 
-void MainWidget::cursorMoved(int value)
+void MainWidget::filterSliderUpdate(int value)
 {
-    // TODO
+    foreach (FaceShrinkingFilter* filter, m_scene.getFilterList())
+    {
+        filter->setFactor(value/100.0f);
+        filter->update();
+    }
+
+    m_scene.notifyShadowMapNeedsComputation();
+    this->update();
+}
+
+void MainWidget::spotVerticalSliderUpdate(int value)
+{
+    QMatrix4x4 positionMatrix = QMatrix4x4();
+    positionMatrix.rotate(value, {1, 0, 0});
+    QVector3D newPosition = QVector3D(positionMatrix * QVector4D({0, 0, 5, 1}));
+    m_scene.getSpotLight()->setPosition(newPosition);
+
+    QVector3D newDirection = QVector3D({0, 0, 0}) - newPosition;
+    m_scene.getSpotLight()->setDirection(newDirection);
+
+    QMatrix4x4 upDirectionMatrix = QMatrix4x4();
+    upDirectionMatrix.rotate(90, {1, 0, 0});
+    m_scene.getSpotLight()->setUpDirection(QVector3D(upDirectionMatrix * QVector4D(newDirection, 1)));
+
+    m_scene.notifyShadowMapNeedsComputation();
+    this->update();
+}
+
+void MainWidget::spotHorizontalSliderUpdate(int value)
+{
+
 }

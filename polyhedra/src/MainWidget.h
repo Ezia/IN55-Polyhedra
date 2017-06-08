@@ -46,7 +46,9 @@ private:
     Scene m_scene;
 
 private slots:
-    void cursorMoved(int value);
+    void filterSliderUpdate(int value);
+    void spotVerticalSliderUpdate(int value);
+    void spotHorizontalSliderUpdate(int value);
 };
 
 #endif // MAINWIDGET_H

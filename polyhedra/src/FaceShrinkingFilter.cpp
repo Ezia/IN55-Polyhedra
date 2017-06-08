@@ -39,9 +39,9 @@ float32 FaceShrinkingFilter::factor() const
 void FaceShrinkingFilter::update()
 {
 
-    QList<PolyhedronFace> new_faces;
-    QList<PolyhedronVertex> new_vertices;
-    int32 vertex_counter = 0;
+    QList<PolyhedronFace> newFaces;
+    QList<PolyhedronVertex> newVertices;
+    int32 vertexCounter = 0;
 
     if (this->m_output != NULL)
     {
@@ -60,6 +60,7 @@ void FaceShrinkingFilter::update()
     else
     {
         m_output = new Polyhedron(false);
+
         // loop over faces
         for (int32 j = 0; j < m_input->getFaceNbr(); j++)
         {
@@ -82,8 +83,8 @@ void FaceShrinkingFilter::update()
                 PolyhedronVertex vertex = *face->getVertex(i);
                 PolyhedronVertex new_vertex(centroid + (vertex.getPosition() - centroid)*m_factor);
                 tmp_face_vertices.push_back(new_vertex);
-                vertices_indices.push_back(vertex_counter);
-                vertex_counter++;
+                vertices_indices.push_back(vertexCounter);
+                vertexCounter++;
 
             }
             m_output->addVertices(tmp_face_vertices);

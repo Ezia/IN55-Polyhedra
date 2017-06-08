@@ -15,6 +15,13 @@ PolyhedronVertex::PolyhedronVertex(QVector3D position) :
     m_normalComputed(false)
 {}
 
+PolyhedronVertex::PolyhedronVertex(const PolyhedronVertex &vertex) :
+    m_position(vertex.m_position),
+    m_faces(),
+    m_normal(0, 0, 0),
+    m_normalComputed(false)
+{}
+
 //============================= ATTRIBUTE ACCESSORS ==========================
 
 QVector3D PolyhedronVertex::getPosition() const

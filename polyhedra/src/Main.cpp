@@ -17,12 +17,30 @@ int32 main(int32 argc, char *argv[])
 #ifndef QT_NO_OPENGL
     QWidget w;
     w.resize(500, 500);
-    QVBoxLayout* layout = new QVBoxLayout(&w);
-    QSlider* slider = new QSlider(Qt::Orientation::Horizontal);
-    layout->addWidget(slider);
-    MainWidget* widget = new MainWidget();
-    layout->addWidget(widget);
-    QObject::connect(slider, SIGNAL(valueChanged(int)), widget, SLOT(cursorMoved(int)));
+    QGridLayout* layout = new QGridLayout(&w);
+
+    // Filter slider
+    QLabel* filterLabel = new QLabel("Filter percentage");
+    layout->addWidget(filterLabel, 1, 1);
+    QSlider* filterSlider = new QSlider(Qt::Orientation::Horizontal);
+    filterSlider->setMinimum(1);
+    filterSlider->setMaximum(100);
+    filterSlider->setValue(50);
+    layout->addWidget(filterSlider, 1, 2);
+
+    // Spot position slider
+    QLabel* spotVerticalPositionLabel = new QLabel("Spot 1 position");
+    layout->addWidget(spotVerticalPositionLabel, 2, 1);
+    QSlider* spotVerticalPositionSlider = new QSlider(Qt::Orientation::Horizontal);
+    spotVerticalPositionSlider->setMinimum(0);
+    spotVerticalPositionSlider->setMaximum(90);
+    spotVerticalPositionSlider->setValue(0);
+    layout->addWidget(spotVerticalPositionSlider, 2, 2);
+
+    MainWidget* imageWidget = new MainWidget();
+    layout->addWidget(imageWidget, 4, 1, 1, 2);
+    QObject::connect(filterSlider, SIGNAL(valueChanged(int)), imageWidget, SLOT(filterSliderUpdate(int)));
+    QObject::connect(spotVerticalPositionSlider, SIGNAL(valueChanged(int)), imageWidget, SLOT(spotVerticalSliderUpdate(int)));
     w.show();
 #else
     QLabel note("OpenGL Support required");

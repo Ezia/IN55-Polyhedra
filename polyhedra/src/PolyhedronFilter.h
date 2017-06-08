@@ -9,6 +9,7 @@ public:
     void setInput(Polyhedron* m_input);
     virtual void update() = 0;
     Polyhedron* getOutput();
+    Polyhedron* getInput();
 
 protected:
     Polyhedron* m_input;

@@ -13,3 +13,8 @@ Polyhedron* PolyhedronFilter::getOutput()
 {
     return m_output;
 }
+
+Polyhedron *PolyhedronFilter::getInput()
+{
+    return m_input;
+}
