@@ -136,7 +136,7 @@ void Scene::init()
 
     // a sphere
     Sphere* sphere1 = new Sphere;
-    sphere1->setPosition({0, 0, 0.5});
+    sphere1->setPosition({0, 2.5, 0.5});
     sphere1->setRadius(1.);
     sphere1->setXYResolution(50);
     sphere1->setXZResolution(20);
@@ -147,6 +147,32 @@ void Scene::init()
     sphere1Filter->update();
     m_filters.append(sphere1Filter);
 
+    // another sphere
+    Sphere* sphere2 = new Sphere;
+    sphere2->setPosition({0, 0, 0.5});
+    sphere2->setRadius(1.);
+    sphere2->setXYResolution(10);
+    sphere2->setXZResolution(5);
+    sphere2->setGeometryColor(TURQUOISE);
+    FaceShrinkingFilter* sphere2Filter = new FaceShrinkingFilter();
+    sphere2Filter->setInput(sphere2);
+    sphere2Filter->setFactor(0.5);
+    sphere2Filter->update();
+    m_filters.append(sphere2Filter);
+
+    // another sphere
+    Sphere* sphere3 = new Sphere;
+    sphere3->setPosition({0, -2.5, 0.5});
+    sphere3->setRadius(1.);
+    sphere3->setXYResolution(4);
+    sphere3->setXZResolution(2);
+    sphere3->setGeometryColor(LIGHT_GRAY);
+    FaceShrinkingFilter* sphere3Filter = new FaceShrinkingFilter();
+    sphere3Filter->setInput(sphere3);
+    sphere3Filter->setFactor(0.5);
+    sphere3Filter->update();
+    m_filters.append(sphere3Filter);
+
     // spot light
     m_spotLight.setDirection({0, 0, -1});
     m_spotLight.setUpDirection({0, 1, 0});
@@ -156,7 +182,7 @@ void Scene::init()
     m_spotLight.setPixelPerDegree(40);
     m_spotLight.setNearPlan(0.5);
     m_spotLight.setFarPlan(15);
-    m_spotLight.setAmbiant({0.2, 0.2, 0.2});
+    m_spotLight.setAmbient({0.2, 0.2, 0.2});
     m_spotLight.setDiffuse({0.6, 0.6, 0.6});
     m_spotLight.setSpecular({1., 1., 1.});
     m_spotLight.setShadowTextureBias(0.005);
@@ -183,15 +209,14 @@ void Scene::drawRender()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    m_renderProgram.setUniformValue("mvp_matrix", m_projectionMatrix * m_viewMatrix);
-    m_renderProgram.setUniformValue("matrixMV", m_viewMatrix);
-    m_renderProgram.setUniformValue("invMatrixMV", m_viewMatrix.inverted());
-    m_renderProgram.setUniformValue("spotLightAmbiant", m_spotLight.getAmbiant());
-    m_renderProgram.setUniformValue("spotLightDiffusion", m_spotLight.getDiffuse());
-    m_renderProgram.setUniformValue("spotLightSpecular", m_spotLight.getSpecular());
-    m_renderProgram.setUniformValue("spotLightPosition", m_spotLight.getPosition());
-    m_renderProgram.setUniformValue("spotLightMVP", m_spotLight.getProjection());
-    m_renderProgram.setUniformValue("shadowBias", m_spotLight.getShadowTextureBias());
+    m_renderProgram.setUniformValue("mvp", m_projectionMatrix * m_viewMatrix);
+    m_renderProgram.setUniformValue("invMv", m_viewMatrix.inverted());
+    m_renderProgram.setUniformValue("light.ambient", m_spotLight.getAmbient());
+    m_renderProgram.setUniformValue("light.diffuse", m_spotLight.getDiffuse());
+    m_renderProgram.setUniformValue("light.specular", m_spotLight.getSpecular());
+    m_renderProgram.setUniformValue("light.position", m_spotLight.getPosition());
+    m_renderProgram.setUniformValue("light.mvp", m_spotLight.getProjection());
+    m_renderProgram.setUniformValue("depthMap.bias", m_spotLight.getShadowTextureBias());
 
     for (int32 i = 0; i < m_objects.size(); i++)
     {

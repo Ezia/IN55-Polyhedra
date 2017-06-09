@@ -19,7 +19,7 @@ public:
 
     QVector3D getSpecular() const;
     QVector3D getDiffuse() const;
-    QVector3D getAmbiant() const;
+    QVector3D getAmbient() const;
     QVector3D getDirection() const;
     QVector3D getPosition() const;
     QVector3D getUpDirection() const;
@@ -33,7 +33,7 @@ public:
     QOpenGLFramebufferObject* getShadowTexture();
 
     void setSpecular(QVector3D specular);
-    void setAmbiant(QVector3D ambiant);
+    void setAmbient(QVector3D ambient);
     void setDiffuse(QVector3D diffuse);
     void setDirection(QVector3D direction);
     void setUpDirection(QVector3D upDirection);
@@ -66,7 +66,7 @@ private:
 
     QVector3D m_specular;
     QVector3D m_diffuse;
-    QVector3D m_ambiant;
+    QVector3D m_ambient;
 };
 
 #endif // SPOTLIGHT_H

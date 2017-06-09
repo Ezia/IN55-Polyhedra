@@ -1,52 +1,72 @@
-uniform vec3 spotLightAmbiant;
-uniform vec3 spotLightDiffusion;
-uniform vec3 spotLightSpecular;
-uniform float shadowBias;
+struct Light
+{
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    vec3 position;
+    mat4 mvp;
+};
 
-varying vec4 positionInSpotLightProjection;
+struct DepthMap
+{
+    sampler2D map;
+    float bias;
+};
 
-uniform sampler2D spotLightDepth;
+// light
+uniform Light light;
 
-varying vec3 normalVec;
-varying vec3 lightVec;
-varying vec3 reflexionVec;
-varying vec3 viewVec;
-varying vec3 color;
+// depth map from the light point of view
+uniform DepthMap depthMap;
 
+// vertex data for illumination
+varying vec4 FPositionInLight;
+varying vec3 FNormal;
+varying vec3 FLightVec;
+varying vec3 FReflexionVec;
+varying vec3 FViewVec;
+varying vec3 FColor;
 
-void main() {
-        vec3 f_normalVec = normalize(normalVec);
-        vec3 f_lightVec = normalize(lightVec);
-        vec3 f_reflexionVec = normalize(reflexionVec);
-        vec3 f_viewVec = normalize(viewVec);
+void main()
+{
+    // normalize vectors
+    vec3 FNormalNorm = normalize(FNormal);
+    vec3 FLightVecNorm = normalize(FLightVec);
+    vec3 FReflexionVecNorm = normalize(FReflexionVec);
+    vec3 FViewVecNorm = normalize(FViewVec);
 
-        float inSpotLight = 1.;
-        vec3 spotPos = (positionInSpotLightProjection.xyz/positionInSpotLightProjection.w +1.)/2.;
-        if ((spotPos.x) > 1. || spotPos.x < 0.) {
-            inSpotLight = 0.;
-        } else if ((spotPos.y) > 1. || spotPos.y < 0.) {
-            inSpotLight = 0.;
-        } else if ((spotPos.z) > 1. || spotPos.z < 0.) {
-            inSpotLight = 0.;
-        } else if ((texture2D(spotLightDepth, spotPos.xy).z)+shadowBias < (spotPos.z)) {
-            inSpotLight = 0.;
-        }
+    // determine if the fragment is in the spotlight
+    bool inSpotLight = true;
+    vec3 spotPos = (FPositionInLight.xyz/FPositionInLight.w +1.)/2.;
+    if ((spotPos.x) > 1. || spotPos.x < 0.) {
+        inSpotLight = false;
+    } else if ((spotPos.y) > 1. || spotPos.y < 0.) {
+        inSpotLight = false;
+    } else if ((spotPos.z) > 1. || spotPos.z < 0.) {
+        inSpotLight = false;
+    } else if ((texture2D(depthMap.map, spotPos.xy).z)+depthMap.bias < (spotPos.z)) {
+        inSpotLight = false;
+    }
 
-        vec3 ambiant = color*spotLightAmbiant;
+    // ambient light
+    vec3 ambient = FColor*(light.ambient);
 
-        vec3 diffuse = color*spotLightDiffusion
-                *max(0., dot(f_lightVec, f_normalVec));
+    if (inSpotLight == true)
+    {
+        // diffuse light
+        vec3 diffuse = FColor*(light.diffuse)
+                *max(0., dot(FLightVecNorm, FNormalNorm));
 
-        vec3 specular;
-        if (dot(f_normalVec, f_lightVec) < 0.0) { // light source on the wrong side?
-            specular = vec3(0.0, 0.0, 0.0); // no specular reflection
-        } else {
-            specular = /*color**/spotLightSpecular
-                *pow(max(0., dot(f_viewVec, f_reflexionVec)), 10.);
-        }
+        // specular light
+        vec3 specular = light.specular
+                *pow(max(0., dot(FViewVecNorm, FReflexionVecNorm)), 10.);
 
-        gl_FragColor = vec4(ambiant+ inSpotLight*(diffuse + specular), 1.);
-
+        gl_FragColor = vec4(ambient + diffuse + specular, 1.);
+    }
+    else
+    {
+        gl_FragColor = vec4(ambient, 1.);
+    }
 }
 
 

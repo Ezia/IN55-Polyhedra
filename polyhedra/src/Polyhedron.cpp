@@ -197,19 +197,19 @@ void Polyhedron::drawRender(QOpenGLShaderProgram *program)
     // Space between positions
     int32 stride = sizeof(VertexData);
 
-    int32 vertexPositionLoc = program->attributeLocation("a_position");
+    int32 vertexPositionLoc = program->attributeLocation("VPosition");
     program->enableAttributeArray(vertexPositionLoc);
     program->setAttributeBuffer(vertexPositionLoc, GL_FLOAT, offset, 3, stride);
 
     offset += sizeof(QVector3D);
 
-    int32 vertexColorLoc = program->attributeLocation("a_color");
+    int32 vertexColorLoc = program->attributeLocation("VColor");
     program->enableAttributeArray(vertexColorLoc);
     program->setAttributeBuffer(vertexColorLoc, GL_FLOAT, offset, 3, stride);
 
     offset += sizeof(QVector3D);
 
-    int32 vertexNormalLoc = program->attributeLocation("a_normal");
+    int32 vertexNormalLoc = program->attributeLocation("VNormal");
     program->enableAttributeArray(vertexNormalLoc);
     program->setAttributeBuffer(vertexNormalLoc, GL_FLOAT, offset, 3, stride);
 
@@ -322,7 +322,7 @@ void Polyhedron::updateBuffers()
 
             // Add indices to list
 
-//            if (doubleFirstIndex)
+//            if (double_first_index)
 //            {
                 indices.push_back(curr_vertex_id);
 //            }
@@ -341,7 +341,7 @@ void Polyhedron::updateBuffers()
                 {
                     indices.push_back(curr_vertex_id+incr_index_value);
                 }
-//                doubleFirstIndex = !doubleFirstIndex;
+//                double_first_index = !double_first_index;
                 index_added_nbr++;
             }
 
@@ -351,7 +351,7 @@ void Polyhedron::updateBuffers()
             indices.push_back(indices.last());
 
             // update vertex index
-//            doubleFirstIndex = face->getVertexNbr()%2 != 0;
+//            double_first_index = face->getVertexNbr()%2 == 0;
         }
 
         // remove last index

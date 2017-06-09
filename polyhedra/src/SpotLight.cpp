@@ -21,7 +21,7 @@ SpotLight::SpotLight() :
     m_shadowTextureUpToDate(false),
     m_specular(1, 1, 1),
     m_diffuse(0.8, 0.8, 0.8),
-    m_ambiant(0.1, 0.1, 0.1)
+    m_ambient(0.1, 0.1, 0.1)
 {}
 
 SpotLight::~SpotLight()
@@ -44,9 +44,9 @@ QVector3D SpotLight::getDiffuse() const
     return m_diffuse;
 }
 
-QVector3D SpotLight::getAmbiant() const
+QVector3D SpotLight::getAmbient() const
 {
-    return m_ambiant;
+    return m_ambient;
 }
 
 QVector3D SpotLight::getDirection() const
@@ -114,9 +114,9 @@ void SpotLight::setSpecular(QVector3D specular)
     m_shadowTextureUpToDate = false;
 }
 
-void SpotLight::setAmbiant(QVector3D ambiant)
+void SpotLight::setAmbient(QVector3D ambient)
 {
-    m_ambiant = ambiant;
+    m_ambient = ambient;
     m_shadowTextureUpToDate = false;
 }
 
