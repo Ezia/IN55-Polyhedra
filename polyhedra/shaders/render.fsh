@@ -41,7 +41,7 @@ void main() {
         if (dot(f_normalVec, f_lightVec) < 0.0) { // light source on the wrong side?
             specular = vec3(0.0, 0.0, 0.0); // no specular reflection
         } else {
-            specular = color*spotLightSpecular
+            specular = /*color**/spotLightSpecular
                 *pow(max(0., dot(f_viewVec, f_reflexionVec)), 10.);
         }
 
