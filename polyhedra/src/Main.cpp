@@ -29,7 +29,7 @@ int32 main(int32 argc, char *argv[])
     layout->addWidget(filterSlider, 1, 2);
 
     // Spot position slider
-    QLabel* spotVerticalPositionLabel = new QLabel("Spot 1 position");
+    QLabel* spotVerticalPositionLabel = new QLabel("Spot position");
     layout->addWidget(spotVerticalPositionLabel, 2, 1);
     QSlider* spotVerticalPositionSlider = new QSlider(Qt::Orientation::Horizontal);
     spotVerticalPositionSlider->setMinimum(0);
